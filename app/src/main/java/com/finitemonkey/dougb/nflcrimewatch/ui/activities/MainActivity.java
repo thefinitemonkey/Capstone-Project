@@ -7,10 +7,11 @@ import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.network.ApiRequestor;
+import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -18,7 +19,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TeamRecentsUtils.startCheckUpdatedInPastDay(this);
 
 
+    }
+
+    @Override
+    public void onTeamRecentsCheckResult(Boolean hasBeenUpdated) {
+        Log.d(TAG, "onTeamRecentsCheckResult: has been updated today is " + hasBeenUpdated);
     }
 }
