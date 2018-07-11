@@ -39,10 +39,12 @@ public abstract class NFLCrimewatchDatabase extends RoomDatabase {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
+                        Log.d(TAG, "onCreate: NFLCrimewatchDatabase created");
                         AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
                             @Override
                             public void run() {
                                 getInstance(context).stadiumsDao().insertAll(Stadiums.populateStadiums());
+                                Log.d(TAG, "run: stadiums inserted into database");
                             }
                         });
                     }
