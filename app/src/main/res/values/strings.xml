@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">NFL Crimewatch</string>
+
+    <string name="CardinalsID">ARI</string>
+    <string name="FalconsID">ATL</string>
+    <string name="RavensID">BAL</string>
+    <string name="BillsID">BUF</string>
+    <string name="PanthersID">CAR</string>
+    <string name="BearsID">CHI</string>
+    <string name="BengalsID">CIN</string>
+    <string name="BrownsID">CLE</string>
+    <string name="CowboysID">DAL</string>
+    <string name="BroncosID">DEN</string>
+    <string name="LionsID">DET</string>
+    <string name="PackersID">GB</string>
+    <string name="TexansID">HOU</string>
+    <string name="ColtsID">IND</string>
+    <string name="JaguarsID">JAC</string>
+    <string name="ChiefsID">KC</string>
+    <string name="RamsID">LA</string>
+    <string name="ChargersID">LAC</string>
+    <string name="DolphinsID">MIA</string>
+    <string name="VikingsID">MIN</string>
+    <string name="PatriotsID">NE</string>
+    <string name="SaintsID">NO</string>
+    <string name="GiantsID">NYG</string>
+    <string name="JetsID">NYJ</string>
+    <string name="RaidersID">OAK</string>
+    <string name="EaglesID">PHI</string>
+    <string name="SteelersID">PIT</string>
+    <string mame="SeahawksID">SEA</string>
+    <string name="SF49ersID">SF</string>
+    <string name="BuccaneersID">TB</string>
+    <string name="TitansID">TEN</string>
+    <string name="RedskinsID">WAS</string>
 </resources>
