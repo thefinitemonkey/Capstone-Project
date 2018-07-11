@@ -1,4 +1,4 @@
-package com.finitemonkey.dougb.nflcrimewatch.data;
+package com.finitemonkey.dougb.nflcrimewatch.data.tables;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

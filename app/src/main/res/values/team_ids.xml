@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="team_ids_array">
+        <item>ARI</item>
+        <item>ATL</item>
+        <item>BAL</item>
+        <item>BUF</item>
+        <item>CAR</item>
+        <item>CHI</item>
+        <item>CIN</item>
+        <item>CLE</item>
+        <item>DAL</item>
+        <item>DEN</item>
+        <item>DET</item>
+        <item>GB</item>
+        <item>HOU</item>
+        <item>IND</item>
+        <item>JAC</item>
+        <item>KC</item>
+        <item>LA</item>
+        <item>LAC</item>
+        <item>MIA</item>
+        <item>MIN</item>
+        <item>NE</item>
+        <item>NO</item>
+        <item>NYG</item>
+        <item>NYJ</item>
+        <item>OAK</item>
+        <item>PHI</item>
+        <item>PIT</item>
+        <item>SEA</item>
+        <item>SF</item>
+        <item>TB</item>
+        <item>TEN</item>
+        <item>WAS</item>
+    </string-array>
+</resources>

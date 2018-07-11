@@ -12,10 +12,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.DateConverter;
+import com.finitemonkey.dougb.nflcrimewatch.data.daos.TeamRecentDao;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 
 @Database(entities = {TeamRecents.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
-public class NFLCrimewatchDatabase extends RoomDatabase {
+public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     private static final String TAG = NFLCrimewatchDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "nflcrimewatch";
@@ -35,6 +37,8 @@ public class NFLCrimewatchDatabase extends RoomDatabase {
         Log.d(TAG, "getInstance: Getting database instance");
         return sInstance;
     }
+
+    public abstract TeamRecentDao teamRecentDao();
 
 
     @NonNull
