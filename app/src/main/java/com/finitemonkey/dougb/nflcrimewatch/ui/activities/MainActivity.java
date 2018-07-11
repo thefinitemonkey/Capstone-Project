@@ -1,4 +1,4 @@
-package com.finitemonkey.dougb.nflcrimewatch.activities;
+package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

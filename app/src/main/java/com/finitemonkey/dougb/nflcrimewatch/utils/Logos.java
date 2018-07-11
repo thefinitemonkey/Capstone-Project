@@ -3,6 +3,8 @@ package com.finitemonkey.dougb.nflcrimewatch.utils;
 import com.finitemonkey.dougb.nflcrimewatch.R;
 
 public class Logos {
+
+    // This function takes the teamId and returns the appropriate logo resource
     public static int lookupIdByTeam(String teamId) {
         int logoAssetId;
 
