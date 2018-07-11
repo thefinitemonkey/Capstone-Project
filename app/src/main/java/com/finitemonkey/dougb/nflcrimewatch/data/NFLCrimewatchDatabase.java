@@ -1,5 +1,6 @@
 package com.finitemonkey.dougb.nflcrimewatch.data;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.DatabaseConfiguration;
@@ -12,10 +13,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.DateConverter;
+import com.finitemonkey.dougb.nflcrimewatch.data.daos.StadiumsDao;
 import com.finitemonkey.dougb.nflcrimewatch.data.daos.TeamRecentDao;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.utils.AppExecutors;
 
-@Database(entities = {TeamRecents.class}, version = 1, exportSchema = false)
+@Database(entities = {Stadiums.class, TeamRecents.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     private static final String TAG = NFLCrimewatchDatabase.class.getSimpleName();
@@ -24,14 +28,25 @@ public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     private static NFLCrimewatchDatabase sInstance;
 
 
-    public static NFLCrimewatchDatabase getInstance(Context context) {
+    public static NFLCrimewatchDatabase getInstance(final Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 Log.d(TAG, "getInstance: Creating new instance of database");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                                                  NFLCrimewatchDatabase.class,
                                                  NFLCrimewatchDatabase.DATABASE_NAME
-                ).build();
+                ).addCallback(new Callback() {
+                    @Override
+                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                        super.onCreate(db);
+                        AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                getInstance(context).stadiumsDao().insertAll(Stadiums.populateStadiums());
+                            }
+                        });
+                    }
+                }).build();
             }
         }
         Log.d(TAG, "getInstance: Getting database instance");
@@ -39,6 +54,8 @@ public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     }
 
     public abstract TeamRecentDao teamRecentDao();
+
+    public abstract StadiumsDao stadiumsDao();
 
 
     @NonNull
