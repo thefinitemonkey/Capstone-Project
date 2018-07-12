@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.utils.Logos;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -108,6 +109,7 @@ public class RecentByTeamsAPI {
             if (tr != null) {
                 for (TeamRecents trItem: tr
                      ) {
+                    trItem.setLogo(Logos.lookupIdByTeam(trItem.getTeam()));
                     mTeamRecents.add(trItem);
                 }
             }
