@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult, StadiumUtils.ClosestTeamCalculationResult, RecentByTeamsAPI.RecentByTeamsListener {
+public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult, StadiumUtils.ClosestTeamCalculationResult, RecentByTeamsAPI.RecentByTeamsListener, TeamRecentsUtils.TeamRecentsUpdateData {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -29,20 +29,23 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
         // Test the calculation to closest stadium
         // lat 29.6503993 lon -95.7350763
         StadiumUtils.getClosestTeam(this, 40.1677863, -83.0089769);
-
-        // Test the retrieval of the recent team offenses
-        String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
-        Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String strToday = dateFormat.format(today);
-        String strBegin = "2000-01-01";
-        RecentByTeamsAPI recentsRetrieval = new RecentByTeamsAPI();
-        recentsRetrieval.getRecentByTeams(this, teamsIds, strBegin, strToday);
     }
 
     @Override
     public void onTeamRecentsCheckResult(Boolean hasBeenUpdated) {
         Log.d(TAG, "onTeamRecentsCheckResult: has been updated today is " + hasBeenUpdated);
+
+        if(!hasBeenUpdated) {
+            Log.d(TAG, "onTeamRecentsCheckResult: updating data");
+            // Test the retrieval of the recent team offenses
+            String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
+            Date today = Calendar.getInstance().getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String strToday = dateFormat.format(today);
+            String strBegin = "2000-01-01";
+            RecentByTeamsAPI recentsRetrieval = new RecentByTeamsAPI();
+            recentsRetrieval.getRecentByTeams(this, teamsIds, strBegin, strToday);
+        }
     }
 
     @Override
@@ -57,5 +60,10 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
              ) {
             Log.d(TAG, "onRecentByTeamsLoadComplete: teamId - " + tr.getTeam());
         }
+    }
+
+    @Override
+    public void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents) {
+        Log.d(TAG, "onTeamRecentsDataUpdated: database update complete");
     }
 }

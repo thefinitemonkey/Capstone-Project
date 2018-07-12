@@ -9,6 +9,7 @@ import android.util.Log;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Logos;
+import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -25,14 +26,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RecentByTeamsAPI {
+public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData{
     private static final String TAG = RecentByTeamsAPI.class.getSimpleName();
+    private Context mContext;
     private int mCounter;
     private List<TeamRecents> mTeamRecents;
     private RecentByTeamsListener mListener;
     private JsonAdapter<List<TeamRecents>> mJsonAdapter;
 
     public void getRecentByTeams(Context context, String[] teamIds, String strBeginDate, String strEndDate) {
+        // Store the context reference
+        mContext = context;
+
         // Store the listener object reference
         mListener = (RecentByTeamsListener) context;
 
@@ -61,11 +66,16 @@ public class RecentByTeamsAPI {
     }
 
     private void decrementCount() {
-        // Decrement the counter. When we hit 0 notify the listener that we're done.
+        // Decrement the counter. When we hit 0 do the update to the database.
         mCounter--;
         if (mCounter == 0) {
-            mListener.onRecentByTeamsLoadComplete(mTeamRecents);
+            TeamRecentsUtils.updateTeamRecents(mContext, mTeamRecents);
         }
+    }
+
+    @Override
+    public void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents) {
+        mListener.onRecentByTeamsLoadComplete(teamRecents);
     }
 
     public interface RecentByTeamsListener {

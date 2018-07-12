@@ -47,8 +47,40 @@ public class TeamRecentsUtils {
         });
     }
 
+    // Clears existing data from the TeamRecents table and inserts new data
+    public static void updateTeamRecents(Context context, final List<TeamRecents> teamRecents) {
+        // Hold onto the context as the listener for the callback
+        final TeamRecentsUpdateData listener = (TeamRecentsUpdateData) context;
+
+        // Set up the instance of the database if needed
+        if (mDb == null) {
+            mDb = NFLCrimewatchDatabase.getInstance(context);
+        }
+
+        // Run the requests to dump the existing data and add the new data
+        AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                TeamRecents[] trArray = new TeamRecents[teamRecents.size()];
+                for (int i = 0; i < trArray.length - 1; i++) {
+                    trArray[i] = teamRecents.get(i);
+                }
+                mDb.teamRecentDao().deleteAllTeamRecents();
+                mDb.teamRecentDao().insertAll(trArray);
+
+                // Make the callback
+                listener.onTeamRecentsDataUpdated(teamRecents);
+            }
+        });
+
+    }
+
     // Interface so caller can listen for result of the updatedInPastDay check
     public interface TeamRecentsUpdateInPastDayResult {
         void onTeamRecentsCheckResult(Boolean hasBeenUpdated);
+    }
+
+    public interface TeamRecentsUpdateData {
+        void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents);
     }
 }
