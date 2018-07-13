@@ -26,7 +26,7 @@ public class TeamRecentsJsonAdapter {
                                                   trj.Position_type,
                                                   trj.Encounter, trj.Category,
                                                   trj.Crime_category_color,
-                                                  trj.Description, trj.Resolution,
+                                                  trj.Description, trj.Outcome,
                                                   trj.DaysToLastTeamArrest,
                                                   Calendar.getInstance().getTime()
         );
@@ -55,7 +55,7 @@ public class TeamRecentsJsonAdapter {
         tj.Category = tr.getCategory();
         tj.Crime_category_color = tr.getCrimeCategoryColor();
         tj.Description = tr.getDescription();
-        tj.Resolution = tr.getResolution();
+        tj.Outcome = tr.getResolution();
         tj.DaysToLastTeamArrest = tr.getDaysToLastTeamArrest();
 
         return tj;

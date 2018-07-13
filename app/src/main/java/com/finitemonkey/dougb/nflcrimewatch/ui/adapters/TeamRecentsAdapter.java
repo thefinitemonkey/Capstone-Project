@@ -62,6 +62,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         holder.mPlayerName.setText(tr.getPlayerName());
         holder.mTeamName.setText(tr.getTeamPreferredName());
         holder.mOffense.setText(tr.getCategory());
+        holder.mDescription.setText(tr.getDescription() + "  (" + tr.getResolution() + ")");
 
         // Set the date display
         String date = mDateFormat.format(tr.getDate());
@@ -86,6 +87,8 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         TextView mOffense;
         @BindView(R.id.tv_offense_date)
         TextView mDate;
+        @BindView(R.id.tv_offense_description)
+        TextView mDescription;
 
         public TeamRecentsViewHolder(View itemView) {
             super(itemView);

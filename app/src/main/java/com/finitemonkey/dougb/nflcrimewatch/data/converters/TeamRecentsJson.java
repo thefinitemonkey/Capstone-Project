@@ -21,6 +21,6 @@ public class TeamRecentsJson {
     String Category;
     String Crime_category_color;
     String Description;
-    String Resolution;
+    String Outcome;
     int DaysToLastTeamArrest;
 }
