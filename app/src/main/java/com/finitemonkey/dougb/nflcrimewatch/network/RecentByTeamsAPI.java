@@ -3,7 +3,6 @@ package com.finitemonkey.dougb.nflcrimewatch.network;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
@@ -22,7 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData, TeamRecentsUtils.TeamRecentUpdateData{
+public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentUpdateData{
     private static final String TAG = RecentByTeamsAPI.class.getSimpleName();
     private Context mContext;
     private int mCounter;
@@ -59,7 +58,6 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData,
             new RecentByTeamsAsync().execute(uri);
 
         }
-        Log.d(TAG, "getRecentByTeams: all calls to retrieve data initialized");
     }
 
     private void decrementCount() {
@@ -68,11 +66,6 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData,
         if (mCounter == 0) {
             mListener.onRecentByTeamsLoadComplete(mTeamRecents);
         }
-    }
-
-    @Override
-    public void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents) {
-        mListener.onRecentByTeamsLoadComplete(teamRecents);
     }
 
     @Override

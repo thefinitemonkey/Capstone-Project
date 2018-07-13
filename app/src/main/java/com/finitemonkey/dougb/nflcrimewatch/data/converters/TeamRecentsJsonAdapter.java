@@ -30,7 +30,6 @@ public class TeamRecentsJsonAdapter {
                                                   trj.DaysToLastTeamArrest,
                                                   Calendar.getInstance().getTime()
         );
-        Log.d(TAG, "teamRecentsFromJson: value of teamRecents.updatedAt is " + teamRecents.getUpdatedAt());
 
         return teamRecents;
     }

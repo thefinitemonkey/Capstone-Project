@@ -15,7 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult, StadiumUtils.ClosestTeamCalculationResult, RecentByTeamsAPI.RecentByTeamsListener, TeamRecentsUtils.TeamRecentsUpdateData {
+public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult,
+        StadiumUtils.ClosestTeamCalculationResult, RecentByTeamsAPI.RecentByTeamsListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -33,10 +34,7 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
 
     @Override
     public void onTeamRecentsCheckResult(Boolean hasBeenUpdated) {
-        Log.d(TAG, "onTeamRecentsCheckResult: has been updated today is " + hasBeenUpdated);
-
         if(!hasBeenUpdated) {
-            Log.d(TAG, "onTeamRecentsCheckResult: updating data");
             // Test the retrieval of the recent team offenses
             String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
             Date today = Calendar.getInstance().getTime();
@@ -55,15 +53,9 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
 
     @Override
     public void onRecentByTeamsLoadComplete(List<TeamRecents> teamRecents) {
-        Log.d(TAG, "onRecentByTeamsLoadComplete: task done");
         for (TeamRecents tr: teamRecents
              ) {
             Log.d(TAG, "onRecentByTeamsLoadComplete: teamId - " + tr.getTeam());
         }
-    }
-
-    @Override
-    public void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents) {
-        Log.d(TAG, "onTeamRecentsDataUpdated: database update complete");
     }
 }
