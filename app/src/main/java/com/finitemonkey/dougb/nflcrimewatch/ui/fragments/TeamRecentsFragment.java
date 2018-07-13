@@ -1,33 +1,45 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.network.RecentByTeamsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.TeamRecentsAdapter;
+import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TeamRecentsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TeamRecentsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TeamRecentsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String TAG = TeamRecentsFragment.class.getSimpleName();
+    @BindView(R.id.rv_team_recents)
+    RecyclerView mRecyclerView;
+    private TeamRecentsAdapter mAdapter;
+    private Context mContext;
+    private Boolean mHasCheckedUpdate = false;
 
     private OnFragmentInteractionListener mListener;
 
@@ -35,20 +47,9 @@ public class TeamRecentsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TeamRecentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TeamRecentsFragment newInstance(String param1, String param2) {
+    public static TeamRecentsFragment newInstance() {
         TeamRecentsFragment fragment = new TeamRecentsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,24 +57,65 @@ public class TeamRecentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    }
+
+    private void setupTeamRecentsViewModel() {
+        TeamRecentsViewModel viewModel = ViewModelProviders.of(this).get(
+                TeamRecentsViewModel.class);
+        viewModel.getTeamRecents().observe(this, new Observer<List<TeamRecents>>() {
+            @Override
+            public void onChanged(@Nullable List<TeamRecents> teamRecents) {
+                // Set the adapter and see if we need a data refresh
+                mAdapter.setTeamRecents(teamRecents);
+                if (!mHasCheckedUpdate) {checkIfUpdatedToday(teamRecents);}
+            }
+        });
+    }
+
+    private void checkIfUpdatedToday(List<TeamRecents> teamRecents) {
+        // Check if the update has already been done today
+        Boolean hasBeenUpdated = TeamRecentsUtils.startCheckUpdatedInPastDay(teamRecents);
+        Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
+
+        // If not updated yet then kick off the update
+        if (!hasBeenUpdated) {
+            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
+            String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
+            Date today = Calendar.getInstance().getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String strToday = dateFormat.format(today);
+            String strBegin = "2000-01-01";
+            RecentByTeamsAPI recentsRetrieval = new RecentByTeamsAPI();
+            recentsRetrieval.getRecentByTeams(mContext, teamsIds, strBegin, strToday);
         }
+
+        mHasCheckedUpdate = true;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: Creating fragment view for TeamRecents");
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_team_recents, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_team_recents, container, false);
+        mContext = view.getContext();
+        ButterKnife.bind(this, view);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        // Set the recycler layout to a grid with a width of 1 by default
+        mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 1));
+        // Initialize the adapter and attach to the view
+        mAdapter = new TeamRecentsAdapter(mContext);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Put in a separator between lines
+        DividerItemDecoration decoration = new DividerItemDecoration(
+                mContext.getApplicationContext(), VERTICAL);
+        mRecyclerView.addItemDecoration(decoration);
+
+        // Set up the viewModel
+        setupTeamRecentsViewModel();
+
+        return view;
     }
 
     @Override
@@ -93,16 +135,6 @@ public class TeamRecentsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

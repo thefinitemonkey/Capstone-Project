@@ -17,8 +17,8 @@ public class TeamRecentsJsonAdapter {
         Date date = DateConverter.toDate(trj.Date);
 
         TeamRecents teamRecents = new TeamRecents(trj.arrest_stats_id, date, trj.Team, 0,
-                                                  trj.Team_Name, trj.Team_Preferred_Name,
-                                                  trj.Team_City, trj.Team_Conference,
+                                                  trj.Team_name, trj.Team_preffered_name,
+                                                  trj.Team_city, trj.Team_Conference,
                                                   trj.Team_Division,
                                                   trj.Team_hex_color, trj.Team_hex_alt_color,
                                                   trj.Name,
@@ -40,9 +40,9 @@ public class TeamRecentsJsonAdapter {
         tj.arrest_stats_id = tr.getArrestStatsId();
         tj.Date = DateConverter.toString(tr.getDate());
         tj.Team = tr.getTeam();
-        tj.Team_Name = tr.getTeamName();
-        tj.Team_Preferred_Name = tr.getTeamPreferredName();
-        tj.Team_City = tr.getTeamCity();
+        tj.Team_name = tr.getTeamName();
+        tj.Team_preffered_name = tr.getTeamPreferredName();
+        tj.Team_city = tr.getTeamCity();
         tj.Team_Conference = tr.getTeamConference();
         tj.Team_Division = tr.getTeamDivision();
         tj.Team_hex_color = tr.getTeamHexColor();

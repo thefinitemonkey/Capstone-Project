@@ -6,9 +6,9 @@ public class TeamRecentsJson {
     int arrest_stats_id;
     String Date;
     String Team;
-    String Team_Name;
-    String Team_Preferred_Name;
-    String Team_City;
+    String Team_name;
+    String Team_preffered_name;
+    String Team_city;
     String Team_Conference;
     String Team_Division;
     String Team_hex_color;

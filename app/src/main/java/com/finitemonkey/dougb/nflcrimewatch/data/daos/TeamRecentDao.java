@@ -14,13 +14,13 @@ import java.util.List;
 
 @Dao
 public interface TeamRecentDao {
-    @Query("SELECT * FROM team_recents ORDER BY date")
+    @Query("SELECT * FROM team_recents ORDER BY date DESC")
     LiveData<List<TeamRecents>> loadTeamRecents();
 
-    @Query("SELECT * FROM team_recents WHERE team=:teamId ORDER BY date")
+    @Query("SELECT * FROM team_recents WHERE team=:teamId ORDER BY date DESC")
     List<TeamRecents> loadSpecificTeamRecents(String teamId);
 
-    @Query("SELECT * FROM team_recents WHERE team=:teamId AND date=:date ORDER BY date")
+    @Query("SELECT * FROM team_recents WHERE team=:teamId AND date=:date ORDER BY date DESC")
     List<TeamRecents> checkTeamDateOccurrences(String teamId, String date);
 
     @Query("DELETE FROM team_recents")

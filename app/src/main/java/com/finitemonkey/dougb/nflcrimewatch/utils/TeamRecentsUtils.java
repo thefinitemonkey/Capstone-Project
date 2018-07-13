@@ -85,7 +85,7 @@ public class TeamRecentsUtils {
                 if (ltr.size() < 1)
                 {
                     if (ntr != null) {
-                        mDb.teamRecentDao().updateTeamRecent(ntr);
+                        mDb.teamRecentDao().insertTeamRecent(ntr);
 
                         listener.onTeamRecentDataUpdated(ntr);
                         return;
@@ -97,7 +97,7 @@ public class TeamRecentsUtils {
                 if (!ltr.get(0).getDate().equals(ntr.getDate())) {
                     mDb.teamRecentDao().deleteTeamRecentsForTeam(ntr.getTeam());
                     // Add the new occurrence and exit
-                    mDb.teamRecentDao().updateTeamRecent(ntr);
+                    mDb.teamRecentDao().insertTeamRecent(ntr);
 
                     listener.onTeamRecentDataUpdated(ntr);
                     return;
@@ -117,7 +117,7 @@ public class TeamRecentsUtils {
                 }
 
                 // This new occurrence doesn't exist yet so it needs to be added
-                mDb.teamRecentDao().updateTeamRecent(ntr);
+                mDb.teamRecentDao().insertTeamRecent(ntr);
                 listener.onTeamRecentDataUpdated(ntr);
             }
         });
