@@ -1,5 +1,7 @@
 package com.finitemonkey.dougb.nflcrimewatch.data.converters;
 
+import android.util.Log;
+
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.squareup.moshi.FromJson;
 import com.squareup.moshi.ToJson;
@@ -8,9 +10,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class TeamRecentsJsonAdapter {
+    private static final String TAG = TeamRecentsJsonAdapter.class.getSimpleName();
+
     @FromJson
     TeamRecents teamRecentsFromJson(TeamRecentsJson trj) {
         Date date = DateConverter.toDate(trj.Date);
+
         TeamRecents teamRecents = new TeamRecents(trj.arrest_stats_id, date, trj.Team, 0,
                                                   trj.Team_Name, trj.Team_Preferred_Name,
                                                   trj.Team_City, trj.Team_Conference,
@@ -25,7 +30,7 @@ public class TeamRecentsJsonAdapter {
                                                   trj.DaysToLastTeamArrest,
                                                   Calendar.getInstance().getTime()
         );
-
+        Log.d(TAG, "teamRecentsFromJson: value of teamRecents.updatedAt is " + teamRecents.getUpdatedAt());
 
         return teamRecents;
     }

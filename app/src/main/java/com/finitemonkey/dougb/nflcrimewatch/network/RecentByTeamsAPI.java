@@ -3,7 +3,6 @@ package com.finitemonkey.dougb.nflcrimewatch.network;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.StrictMode;
 import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
@@ -16,23 +15,21 @@ import com.squareup.moshi.Types;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData{
+public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData, TeamRecentsUtils.TeamRecentUpdateData{
     private static final String TAG = RecentByTeamsAPI.class.getSimpleName();
     private Context mContext;
     private int mCounter;
     private List<TeamRecents> mTeamRecents;
     private RecentByTeamsListener mListener;
     private JsonAdapter<List<TeamRecents>> mJsonAdapter;
+    private final RecentByTeamsAPI recentByTeamAPIRef = this;
 
     public void getRecentByTeams(Context context, String[] teamIds, String strBeginDate, String strEndDate) {
         // Store the context reference
@@ -69,13 +66,19 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData{
         // Decrement the counter. When we hit 0 do the update to the database.
         mCounter--;
         if (mCounter == 0) {
-            TeamRecentsUtils.updateTeamRecents(mContext, mTeamRecents);
+            mListener.onRecentByTeamsLoadComplete(mTeamRecents);
         }
     }
 
     @Override
     public void onTeamRecentsDataUpdated(List<TeamRecents> teamRecents) {
         mListener.onRecentByTeamsLoadComplete(teamRecents);
+    }
+
+    @Override
+    public void onTeamRecentDataUpdated(TeamRecents teamRecent) {
+        mTeamRecents.add(teamRecent);
+        decrementCount();
     }
 
     public interface RecentByTeamsListener {
@@ -120,11 +123,9 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentsUpdateData{
                 for (TeamRecents trItem: tr
                      ) {
                     trItem.setLogo(Logos.lookupIdByTeam(trItem.getTeam()));
-                    mTeamRecents.add(trItem);
+                    TeamRecentsUtils.updateSingleTeamRecents(mContext, recentByTeamAPIRef, trItem);
                 }
             }
-
-            decrementCount();
         }
 
     }

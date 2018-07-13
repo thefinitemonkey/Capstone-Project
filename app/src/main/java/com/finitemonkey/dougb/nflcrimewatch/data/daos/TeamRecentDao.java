@@ -19,13 +19,20 @@ public interface TeamRecentDao {
     @Query("SELECT * FROM team_recents WHERE team=:teamId ORDER BY date")
     List<TeamRecents> loadSpecificTeamRecents(String teamId);
 
+    @Query("SELECT * FROM team_recents WHERE team=:teamId AND date=:date ORDER BY date")
+    List<TeamRecents> checkTeamDateOccurrences(String teamId, String date);
+
     @Query("DELETE FROM team_recents")
     void deleteAllTeamRecents();
+
+    @Query("DELETE FROM team_recents WHERE team=:teamId")
+    void deleteTeamRecentsForTeam(String teamId);
 
     @Insert
     void insertTeamRecent(TeamRecents teamRecent);
 
-    @Insert void insertAll(TeamRecents... teamRecents);
+    @Insert
+    void insertAll(TeamRecents... teamRecents);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateTeamRecent(TeamRecents teamRecent);

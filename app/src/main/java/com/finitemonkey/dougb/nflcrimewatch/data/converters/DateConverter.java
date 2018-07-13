@@ -9,7 +9,7 @@ import java.util.Date;
 public class DateConverter {
     @TypeConverter
     public static Date toDate(String date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date parsedDate;
         try {
             parsedDate = formatter.parse(date);
