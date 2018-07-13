@@ -12,6 +12,7 @@ import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentByTeamsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
@@ -21,8 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.TeamRecentsUpdateInPastDayResult,
-        RecentByTeamsAPI.RecentByTeamsListener {
+public class MainActivity extends AppCompatActivity implements RecentByTeamsAPI.RecentByTeamsListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -30,11 +30,8 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Test the check of updated TeamRecents
-        TeamRecentsUtils.startCheckUpdatedInPastDay(this);
-
         setupClosestTeamViewModel();
-
+        setupTeamRecentsViewModel();
     }
 
     private void setupClosestTeamViewModel() {
@@ -51,10 +48,21 @@ public class MainActivity extends AppCompatActivity implements TeamRecentsUtils.
         });
     }
 
-    @Override
-    public void onTeamRecentsCheckResult(Boolean hasBeenUpdated) {
+    private void setupTeamRecentsViewModel() {
+        TeamRecentsViewModel viewModel = ViewModelProviders.of(this).get(
+                TeamRecentsViewModel.class);
+        viewModel.getTeamRecents().observe(this, new Observer<List<TeamRecents>>() {
+            @Override
+            public void onChanged(@Nullable List<TeamRecents> teamRecents) {
+                onTeamRecentsCheckResult(TeamRecentsUtils.startCheckUpdatedInPastDay(teamRecents));
+            }
+        });
+    }
+
+    private void onTeamRecentsCheckResult(Boolean hasBeenUpdated) {
+        Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
         if (!hasBeenUpdated) {
-            // Test the retrieval of the recent team offenses
+            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
             String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
             Date today = Calendar.getInstance().getTime();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

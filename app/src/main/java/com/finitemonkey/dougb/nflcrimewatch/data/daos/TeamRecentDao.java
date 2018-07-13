@@ -1,5 +1,6 @@
 package com.finitemonkey.dougb.nflcrimewatch.data.daos;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -14,7 +15,7 @@ import java.util.List;
 @Dao
 public interface TeamRecentDao {
     @Query("SELECT * FROM team_recents ORDER BY date")
-    List<TeamRecents> loadTeamRecents();
+    LiveData<List<TeamRecents>> loadTeamRecents();
 
     @Query("SELECT * FROM team_recents WHERE team=:teamId ORDER BY date")
     List<TeamRecents> loadSpecificTeamRecents(String teamId);

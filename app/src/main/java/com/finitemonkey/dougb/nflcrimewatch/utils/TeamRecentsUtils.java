@@ -17,37 +17,45 @@ public class TeamRecentsUtils {
 
     // This function does the work to check in the team_recents (TeamRecents) table to
     // verify whether the data is more than a day old
-    public static void startCheckUpdatedInPastDay(Context context) {
+    public static Boolean startCheckUpdatedInPastDay(List<TeamRecents> teamRecents) {
+        // If there are no results then we've never loaded. Otherwise check
+        // to see how long since the last update.'
+        Boolean hasBeenUpdated = false;
+        if (teamRecents.size() > 0) {
+            Date today = Calendar.getInstance().getTime();
+            Date lastUpdate = teamRecents.get(0).getUpdatedAt();
+            int days = (int) (today.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
+
+            if (days < 1) {
+                hasBeenUpdated = true;
+            }
+        }
+
+        return hasBeenUpdated;
+
         // Hold onto the context as the listener for the callback
-        final TeamRecentsUpdateInPastDayResult listener = (TeamRecentsUpdateInPastDayResult) context;
+        //final TeamRecentsUpdateInPastDayResult listener = (TeamRecentsUpdateInPastDayResult) context;
 
         // Set up the instance of the database if needed
+        /*
         if (mDb == null) {
             mDb = NFLCrimewatchDatabase.getInstance(context);
         }
+        */
 
         // Run the request for all recent team offenses and check last update in a Runnable
+        /*
         AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
             @Override
             public void run() {
                 Boolean hasBeenUpdated = false;
                 final List<TeamRecents> offenses = mDb.teamRecentDao().loadTeamRecents();
-                // If there are no results then we've never loaded. Otherwise check
-                // to see how long since the last update.
-                if (offenses.size() > 0) {
-                    Date today = Calendar.getInstance().getTime();
-                    Date lastUpdate = offenses.get(0).getUpdatedAt();
-                    int days = (int) (today.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
-
-                    if (days < 1) {
-                        hasBeenUpdated = true;
-                    }
-                }
 
                 // Make the callback
                 listener.onTeamRecentsCheckResult(hasBeenUpdated);
             }
         });
+        */
     }
 
     public static void updateSingleTeamRecents(Context context, Object callback, final TeamRecents teamRecent) {
@@ -113,11 +121,6 @@ public class TeamRecentsUtils {
                 listener.onTeamRecentDataUpdated(ntr);
             }
         });
-    }
-
-    // Interface so caller can listen for result of the updatedInPastDay check
-    public interface TeamRecentsUpdateInPastDayResult {
-        void onTeamRecentsCheckResult(Boolean hasBeenUpdated);
     }
 
     public interface TeamRecentUpdateData {
