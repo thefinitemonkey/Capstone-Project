@@ -21,5 +21,5 @@ public class TeamArrestsViewModel extends AndroidViewModel {
         mArrests = db.arrestsDao().loadTeamArrests(teamId);
     }
 
-    public LiveData<List<Arrests>> getTeamRecents() {return mArrests;}
+    public LiveData<List<Arrests>> getTeamArrests() {return mArrests;}
 }

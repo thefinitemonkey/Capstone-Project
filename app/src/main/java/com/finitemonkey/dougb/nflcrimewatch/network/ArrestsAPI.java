@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.converters.ArrestsJsonAdapter;
+import com.finitemonkey.dougb.nflcrimewatch.data.converters.NullPrimitiveJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
@@ -31,15 +33,18 @@ public class ArrestsAPI implements ArrestsUtils.ArrestUpdateData {
     private List<Arrests> mArrests;
     private JsonAdapter<List<Arrests>> mJsonAdapter;
 
+    private void configureMoshi() {
+        // Set up the Moshi adapter and the list of Arrests
+        Moshi moshi = new Moshi.Builder().add(new ArrestsJsonAdapter()).add(new NullPrimitiveJsonAdapter()).build();
+        Type type = Types.newParameterizedType(List.class, Arrests.class);
+        mJsonAdapter = moshi.adapter(type);
+        mArrests = new ArrayList<Arrests>();
+    }
+
     public void getArrestsByTeam(Context context, String teamId, String strBeginDate, String strEndDate) {
         // Store the context reference
         mContext = context;
-
-        // Set up the Moshi adapter and the list of Arrests
-        Moshi moshi = new Moshi.Builder().add(new TeamRecentsJsonAdapter()).build();
-        Type type = Types.newParameterizedType(List.class, TeamRecents.class);
-        mJsonAdapter = moshi.adapter(type);
-        mArrests = new ArrayList<Arrests>();
+        configureMoshi();
 
         // Begin background loading for the arrests request
         // Get the pieces from the string constants for this api
@@ -60,12 +65,7 @@ public class ArrestsAPI implements ArrestsUtils.ArrestUpdateData {
     public void getArrestsByPosition(Context context, String positionId, String strBeginDate, String strEndDate) {
         // Store the context reference
         mContext = context;
-
-        // Set up the Moshi adapter and the list of Arrests
-        Moshi moshi = new Moshi.Builder().add(new TeamRecentsJsonAdapter()).build();
-        Type type = Types.newParameterizedType(List.class, TeamRecents.class);
-        mJsonAdapter = moshi.adapter(type);
-        mArrests = new ArrayList<Arrests>();
+        configureMoshi();
 
         // Begin background loading for the arrests request
         // Get the pieces from the string constants for this api
@@ -86,12 +86,7 @@ public class ArrestsAPI implements ArrestsUtils.ArrestUpdateData {
     public void getArrestsByCrime(Context context, String crimeId, String strBeginDate, String strEndDate) {
         // Store the context reference
         mContext = context;
-
-        // Set up the Moshi adapter and the list of Arrests
-        Moshi moshi = new Moshi.Builder().add(new TeamRecentsJsonAdapter()).build();
-        Type type = Types.newParameterizedType(List.class, TeamRecents.class);
-        mJsonAdapter = moshi.adapter(type);
-        mArrests = new ArrayList<Arrests>();
+        configureMoshi();
 
         // Begin background loading for the arrests request
         // Get the pieces from the string constants for this api

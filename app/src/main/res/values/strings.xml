@@ -10,6 +10,12 @@
     <string name="api_start_date">start_date</string>
     <string name="api_limit">limit</string>
 
+    <string name="sourced_instance_type">sourced_instance_type</string>
+    <string name="source_team">team</string>
+    <string name="source_position">position</string>
+    <string name="source_crime">encounter</string>
+    <string name="source_id">sourceId</string>
+
 
     <string name="CardinalsID">ARI</string>
     <string name="FalconsID">ATL</string>
@@ -49,4 +55,5 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tv_placeholder_team_name">Team Name</string>
+    <string name="title_activity_sourced_offenses">SourcedOffensesActivity</string>
 </resources>

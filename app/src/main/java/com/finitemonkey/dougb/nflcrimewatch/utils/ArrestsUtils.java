@@ -23,7 +23,9 @@ public class ArrestsUtils {
         Boolean hasBeenUpdated = false;
         if (arrests.size() > 0) {
             Date today = Calendar.getInstance().getTime();
-            Date lastUpdate = arrests.get(0).getUpdatedAt();
+            // Check the last position since the list will be in descending order
+            int lastPos = arrests.size() - 1;
+            Date lastUpdate = arrests.get(lastPos).getUpdatedAt();
             int days = (int) (today.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
 
             if (days < 1) {

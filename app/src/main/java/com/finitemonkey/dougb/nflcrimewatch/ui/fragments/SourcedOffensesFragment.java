@@ -1,5 +1,6 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.fragments;
 
+import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -16,10 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.network.ArrestsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentByTeamsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.SourcedOffensesAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.TeamRecentsAdapter;
+import com.finitemonkey.dougb.nflcrimewatch.utils.ArrestsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
 
 import java.text.SimpleDateFormat;
@@ -34,22 +41,23 @@ import static android.support.v7.widget.DividerItemDecoration.HORIZONTAL;
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 
-public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.TeamRecentsHolderClickListener {
-    private static final String TAG = TeamRecentsFragment.class.getSimpleName();
-    @BindView(R.id.rv_team_recents)
+public class SourcedOffensesFragment extends Fragment {
+    private static final String TAG = SourcedOffensesFragment.class.getSimpleName();
+    @BindView(R.id.rv_sourced_offenses)
     RecyclerView mRecyclerView;
-    private TeamRecentsAdapter mAdapter;
+    private SourcedOffensesAdapter mAdapter;
     private Context mContext;
     private Boolean mHasCheckedUpdate = false;
+    private String mSourceId = "";
+
     private OnFragmentInteractionListener mListener;
 
-
-    public TeamRecentsFragment() {
+    public SourcedOffensesFragment() {
         // Required empty public constructor
     }
 
-    public static TeamRecentsFragment newInstance() {
-        TeamRecentsFragment fragment = new TeamRecentsFragment();
+    public static SourcedOffensesFragment newInstance() {
+        SourcedOffensesFragment fragment = new SourcedOffensesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -60,25 +68,29 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
         super.onCreate(savedInstanceState);
     }
 
-    private void setupTeamRecentsViewModel() {
-        TeamRecentsViewModel viewModel = ViewModelProviders.of(this).get(
-                TeamRecentsViewModel.class);
-        viewModel.getTeamRecents().observe(this, new Observer<List<TeamRecents>>() {
+    private void setupTeamArrestsViewModel() {
+        Application application = this.getActivity().getApplication();
+        TeamArrestsViewModel viewModel =
+                ViewModelProviders.of(this, new TeamArrestsViewModelFactory(
+                        application, mSourceId)
+                ).get(TeamArrestsViewModel.class);
+        viewModel.getTeamArrests().observe(this, new Observer<List<Arrests>>() {
             @Override
-            public void onChanged(@Nullable List<TeamRecents> teamRecents) {
+            public void onChanged(@Nullable List<Arrests> arrests) {
                 // Set the adapter and see if we need a data refresh
-                mAdapter.setTeamRecents(teamRecents);
+                mAdapter.setArrests(arrests);
                 if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(teamRecents);
+                    String teamId = "";
+                    checkIfUpdatedToday(arrests, mSourceId);
                 }
             }
         });
     }
 
-    private void checkIfUpdatedToday(List<TeamRecents> teamRecents) {
+    private void checkIfUpdatedToday(List<Arrests> arrests, String sourceId) {
         // Check if the update has already been done today
-        Boolean hasBeenUpdated = TeamRecentsUtils.startCheckUpdatedInPastDay(teamRecents);
-        Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
+        Boolean hasBeenUpdated = ArrestsUtils.startCheckUpdatedInPastDay(arrests);
+        Log.d(TAG, "onCheckIfUpdatedToday (sourced offenses): arrests data has been updated today is " + hasBeenUpdated);
 
         // If not updated yet then kick off the update
         if (!hasBeenUpdated) {
@@ -88,8 +100,8 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strToday = dateFormat.format(today);
             String strBegin = "2000-01-01";
-            RecentByTeamsAPI recentsRetrieval = new RecentByTeamsAPI();
-            recentsRetrieval.getRecentByTeams(mContext, teamsIds, strBegin, strToday);
+            ArrestsAPI recentsRetrieval = new ArrestsAPI();
+            recentsRetrieval.getArrestsByTeam(mContext, sourceId, strBegin, strToday);
         }
 
         mHasCheckedUpdate = true;
@@ -98,9 +110,9 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: Creating fragment view for TeamRecents");
+        Log.d(TAG, "onCreateView: Creating fragment view for SourcedOffenses");
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_team_recents, container, false);
+        View view = inflater.inflate(R.layout.fragment_sourced_offenses, container, false);
         mContext = view.getContext();
         ButterKnife.bind(this, view);
 
@@ -108,7 +120,7 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
         int spanCount = getResources().getInteger(R.integer.num_team_recents_grid);
         mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, spanCount));
         // Initialize the adapter and attach to the view
-        mAdapter = new TeamRecentsAdapter(mContext, this);
+        mAdapter = new SourcedOffensesAdapter(mContext);
         mRecyclerView.setAdapter(mAdapter);
 
         // Put in a separator between lines
@@ -122,8 +134,24 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
             mRecyclerView.addItemDecoration(landDecoration);
         }
 
-        // Set up the viewModel
-        setupTeamRecentsViewModel();
+        // Get the source ID for future use
+        mSourceId = getArguments().getString(getResources().getString(R.string.source_id));
+
+        // Set up the appropriate viewModel
+        int sourceType = getArguments().getInt(
+                getResources().getString(R.string.sourced_instance_type));
+        switch (sourceType) {
+            case (R.string.source_team): {
+                setupTeamArrestsViewModel();
+                break;
+            }
+            case (R.string.source_position): {
+                break;
+            }
+            case (R.string.source_crime): {
+                break;
+            }
+        }
 
         return view;
     }
@@ -145,13 +173,8 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
         mListener = null;
     }
 
-    @Override
-    public void onTeamRecentsHolderClick(String teamId) {
-        mListener.onFragmentInteraction(R.string.source_team, teamId);
-    }
-
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(int sourceType, String teamId);
+        void onFragmentInteraction(Uri uri);
     }
 }

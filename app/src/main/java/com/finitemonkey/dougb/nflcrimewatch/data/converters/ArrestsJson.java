@@ -20,5 +20,4 @@ public class ArrestsJson {
     String Crime_category_color;
     String Description;
     String Outcome;
-    int DaysToLastTeamArrest;
 }

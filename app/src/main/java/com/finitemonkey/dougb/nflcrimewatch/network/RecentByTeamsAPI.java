@@ -50,7 +50,13 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentUpdateData{
 
         String limit = "1";
 
-        // Iterate over all the teams to initiate the requests for background loading
+        /*
+        Iterate over all the teams to initiate the requests for background loading
+        NOTE: Yes, this is horribly inefficient compared to how it should be, but
+        the nflarrests.com services do not provide a method for retrieving the most
+        recent incident for each team in a single call. So we will be making a separate
+        call per NFL team and sorting bodies from there.
+        */
         for (int i = 0; i < teamIds.length ; i++) {
             String teamId = teamIds[i];
 
@@ -68,7 +74,6 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentUpdateData{
                     endParam, strEndDate).appendQueryParameter(
                     startParam, strBeginDate).appendQueryParameter(limitParam, limit).build();
             new RecentByTeamsAsync().execute(uri);
-
         }
     }
 

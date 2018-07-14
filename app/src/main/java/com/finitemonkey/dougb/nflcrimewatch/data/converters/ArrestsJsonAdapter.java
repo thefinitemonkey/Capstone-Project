@@ -1,5 +1,7 @@
 package com.finitemonkey.dougb.nflcrimewatch.data.converters;
 
+import android.support.annotation.Nullable;
+
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.squareup.moshi.FromJson;
@@ -26,11 +28,18 @@ public class ArrestsJsonAdapter {
                                           aj.Encounter, aj.Category,
                                           aj.Crime_category_color,
                                           aj.Description, aj.Outcome,
-                                          aj.DaysToLastTeamArrest,
                                           Calendar.getInstance().getTime()
         );
 
         return arrests;
+    }
+
+    @FromJson
+    public int intFromJson(@Nullable Integer value) {
+        if (value == null) {
+            return 0;
+        }
+        return value;
     }
 
     @ToJson ArrestsJson arrestsToJson(Arrests ar) {
@@ -55,7 +64,6 @@ public class ArrestsJsonAdapter {
         aj.Crime_category_color = ar.getCrimeCategoryColor();
         aj.Description = ar.getDescription();
         aj.Outcome = ar.getResolution();
-        aj.DaysToLastTeamArrest = ar.getDaysToLastTeamArrest();
 
         return aj;
     }

@@ -31,7 +31,6 @@ public class Arrests {
     private String crimeCategoryColor;
     private String description;
     private String resolution;
-    private int daysToLastTeamArrest;
 
     @Ignore
     public Arrests(int arrestStatsId, Date date, String team, int logo, String teamName,
@@ -40,7 +39,7 @@ public class Arrests {
                    String playerName, String playerPosition, String playerPositionName,
                    String playerPositionType, String encounter, String category,
                    String crimeCategoryColor, String description, String resolution,
-                   int daysToLastTeamArrest, Date updatedAt) {
+                   Date updatedAt) {
         this.arrestStatsId = arrestStatsId;
         this.date = date;
         this.team = team;
@@ -61,7 +60,6 @@ public class Arrests {
         this.crimeCategoryColor = crimeCategoryColor;
         this.description = description;
         this.resolution = resolution;
-        this.daysToLastTeamArrest = daysToLastTeamArrest;
         this.updatedAt = updatedAt;
     }
 
@@ -71,7 +69,7 @@ public class Arrests {
                    String playerName, String playerPosition, String playerPositionName,
                    String playerPositionType, String encounter, String category,
                    String crimeCategoryColor, String description, String resolution,
-                   int daysToLastTeamArrest, Date updatedAt) {
+                   Date updatedAt) {
         this.id = id;
         this.arrestStatsId = arrestStatsId;
         this.date = date;
@@ -93,7 +91,6 @@ public class Arrests {
         this.crimeCategoryColor = crimeCategoryColor;
         this.description = description;
         this.resolution = resolution;
-        this.daysToLastTeamArrest = daysToLastTeamArrest;
         this.updatedAt = updatedAt;
     }
 
@@ -159,9 +156,6 @@ public class Arrests {
 
     public String getResolution() {return resolution;}
     public void setResolution(String resolution) {this.resolution = resolution;}
-
-    public int getDaysToLastTeamArrest() {return daysToLastTeamArrest;}
-    public void setDaysToLastTeamArrest(int daysToLastTeamArrest) {this.daysToLastTeamArrest = daysToLastTeamArrest;}
 
     public Date getUpdatedAt() {return updatedAt;}
     public void setUpdatedAt(Date updatedAt) {this.updatedAt = updatedAt;}

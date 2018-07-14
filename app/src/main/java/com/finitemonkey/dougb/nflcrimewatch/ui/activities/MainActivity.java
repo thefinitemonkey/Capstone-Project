@@ -1,5 +1,6 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -96,7 +97,12 @@ public class MainActivity extends AppCompatActivity implements RecentByTeamsAPI.
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onFragmentInteraction(int sourceType, String sourceId) {
+        // Create the intent to navigate to the SourcedOffensesActivity for the selected entity
+        Class destinationClass = SourcedOffensesActivity.class;
+        Intent showOffenses = new Intent(this, destinationClass);
+        showOffenses.putExtra(getResources().getString(R.string.sourced_instance_type), sourceType);
+        showOffenses.putExtra(getResources().getString(R.string.source_id), sourceId);
+        startActivity(showOffenses);
     }
 }

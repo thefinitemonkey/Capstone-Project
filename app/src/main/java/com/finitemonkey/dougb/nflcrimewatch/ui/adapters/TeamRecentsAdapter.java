@@ -25,9 +25,11 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     private int mTeamRecentsCount = 0;
     private Context mContext;
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, `yy");
+    private TeamRecentsHolderClickListener mListener;
 
-    public TeamRecentsAdapter(Context context) {
+    public TeamRecentsAdapter(Context context, TeamRecentsHolderClickListener listener) {
         mContext = context;
+        mListener = listener;
     }
 
     public void setTeamRecents(List<TeamRecents> teamRecents) {
@@ -48,6 +50,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull TeamRecentsViewHolder holder, int position) {
+
         // Get the TeamRecents item to work from
         TeamRecents tr = mTeamRecents.get(position);
 
@@ -75,7 +78,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         return mTeamRecentsCount;
     }
 
-    class TeamRecentsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class TeamRecentsViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
         @BindView(R.id.iv_team_logo)
         ImageView mTeamLogo;
         @BindView(R.id.tv_player_name)
@@ -89,13 +92,20 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
 
         public TeamRecentsViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             ButterKnife.bind(this, itemView);
         }
 
         @Override
         public void onClick(View v) {
-
+            int clickPosition = getAdapterPosition();
+            String teamId = mTeamRecents.get(clickPosition).getTeam();
+            mListener.onTeamRecentsHolderClick(teamId);
         }
+    }
+
+    public interface TeamRecentsHolderClickListener {
+        void onTeamRecentsHolderClick(String teamId);
     }
 }

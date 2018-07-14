@@ -21,8 +21,8 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.finitemonkey.dougb.nflcrimewatch.utils.AppExecutors;
 
-@Database(entities = {Stadiums.class, TeamRecents.class, Arrests.class}, version = 1, exportSchema = false)
-@TypeConverters(DateConverter.class)
+@Database(entities = {Stadiums.class, TeamRecents.class, Arrests.class}, version = 2, exportSchema = false)
+@TypeConverters({DateConverter.class})
 public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     private static final String TAG = NFLCrimewatchDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
