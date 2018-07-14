@@ -41,7 +41,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     public TeamRecentsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the template
         View view = LayoutInflater.from(mContext).inflate(
-                R.layout.rv_template_team_recent, parent, false);
+                R.layout.rv_template_team_recents, parent, false);
 
         return new TeamRecentsViewHolder(view);
     }
@@ -55,14 +55,15 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         holder.mTeamLogo.setImageResource(tr.getLogo());
 
         // Set the offense color
-        int colorCode = Color.parseColor("#" + tr.getCrimeCategoryColor());
-        holder.mOffenseColor.setBackgroundColor(colorCode);
+        //int colorCode = Color.parseColor("#" + tr.getCrimeCategoryColor());
+        //holder.mOffenseColor.setBackgroundColor(colorCode);
 
         // Set the text displays
         holder.mPlayerName.setText(tr.getPlayerName());
         holder.mTeamName.setText(tr.getTeamPreferredName());
-        holder.mOffense.setText(tr.getCategory());
-        holder.mDescription.setText(tr.getDescription() + "  (" + tr.getResolution() + ")");
+        holder.mDivision.setText("(" + tr.getTeamConference() + " " + tr.getTeamDivision() + ")");
+        //holder.mOffense.setText(tr.getCategory());
+        //holder.mDescription.setText(tr.getDescription() + "  (" + tr.getResolution() + ")");
 
         // Set the date display
         String date = mDateFormat.format(tr.getDate());
@@ -77,18 +78,14 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     class TeamRecentsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.iv_team_logo)
         ImageView mTeamLogo;
-        @BindView(R.id.iv_offense_color)
-        ImageView mOffenseColor;
         @BindView(R.id.tv_player_name)
         TextView mPlayerName;
         @BindView(R.id.tv_team_name)
         TextView mTeamName;
-        @BindView(R.id.tv_offense_type)
-        TextView mOffense;
         @BindView(R.id.tv_offense_date)
         TextView mDate;
-        @BindView(R.id.tv_offense_description)
-        TextView mDescription;
+        @BindView(R.id.tv_div_conf)
+        TextView mDivision;
 
         public TeamRecentsViewHolder(View itemView) {
             super(itemView);
