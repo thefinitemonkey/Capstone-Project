@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "team_recents")
+@Entity(tableName = "arrests")
 public class Arrests {
     @PrimaryKey(autoGenerate = true) private int id;
     @ColumnInfo(name = "updated_at") private Date updatedAt;
