@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="num_team_recents_grid">2</integer>
+    <bool name="show_vertical_dividers">true</bool>
+    <bool name="is_portrait">true</bool>
+</resources>

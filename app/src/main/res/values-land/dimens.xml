@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="logo_max_height">80dp</dimen>
+    <bool name="is_portrait">false</bool>
     <bool name="show_vertical_dividers">false</bool>
-    <bool name="is_portrait">true</bool>
     <integer name="num_team_recents_grid">1</integer>
 </resources>

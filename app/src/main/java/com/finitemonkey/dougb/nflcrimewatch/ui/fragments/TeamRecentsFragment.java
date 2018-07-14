@@ -30,6 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.support.v7.widget.DividerItemDecoration.HORIZONTAL;
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 
@@ -67,7 +68,9 @@ public class TeamRecentsFragment extends Fragment {
             public void onChanged(@Nullable List<TeamRecents> teamRecents) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setTeamRecents(teamRecents);
-                if (!mHasCheckedUpdate) {checkIfUpdatedToday(teamRecents);}
+                if (!mHasCheckedUpdate) {
+                    checkIfUpdatedToday(teamRecents);
+                }
             }
         });
     }
@@ -102,15 +105,22 @@ public class TeamRecentsFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         // Set the recycler layout to a grid with a width of 1 by default
-        mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 1));
+        int spanCount = getResources().getInteger(R.integer.num_team_recents_grid);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, spanCount));
         // Initialize the adapter and attach to the view
         mAdapter = new TeamRecentsAdapter(mContext);
         mRecyclerView.setAdapter(mAdapter);
 
         // Put in a separator between lines
+        Boolean showVerticalDividers = getResources().getBoolean(R.bool.show_vertical_dividers);
         DividerItemDecoration decoration = new DividerItemDecoration(
                 mContext.getApplicationContext(), VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
+        if (showVerticalDividers) {
+            DividerItemDecoration landDecoration = new DividerItemDecoration(
+                    mContext.getApplicationContext(), HORIZONTAL);
+            mRecyclerView.addItemDecoration(landDecoration);
+        }
 
         // Set up the viewModel
         setupTeamRecentsViewModel();

@@ -1,9 +1,11 @@
 package com.finitemonkey.dougb.nflcrimewatch.network;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.TeamRecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Logos;
@@ -51,10 +53,20 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentUpdateData{
         // Iterate over all the teams to initiate the requests for background loading
         for (int i = 0; i < teamIds.length ; i++) {
             String teamId = teamIds[i];
-            Uri uri = new Uri.Builder().scheme("http").authority("nflarrest.com").appendEncodedPath(
-                    "api/v1/team/arrests/" + teamId).appendQueryParameter(
-                    "end_date", strEndDate).appendQueryParameter(
-                    "start_date", strBeginDate).appendQueryParameter("limit", limit).build();
+
+            // Get the pieces from the string constants for this api
+            Resources resources = mContext.getResources();
+            String scheme = resources.getString(R.string.api_scheme);
+            String authority = resources.getString(R.string.api_authority);
+            String path = resources.getString(R.string.api_team_arrests_path);
+            String endParam = resources.getString(R.string.api_end_date);
+            String startParam = resources.getString(R.string.api_start_date);
+            String limitParam = resources.getString(R.string.api_limit);
+
+            Uri uri = new Uri.Builder().scheme(scheme).authority(authority).appendEncodedPath(
+                    path + teamId).appendQueryParameter(
+                    endParam, strEndDate).appendQueryParameter(
+                    startParam, strBeginDate).appendQueryParameter(limitParam, limit).build();
             new RecentByTeamsAsync().execute(uri);
 
         }
@@ -90,6 +102,8 @@ public class RecentByTeamsAPI implements TeamRecentsUtils.TeamRecentUpdateData{
             } catch (IOException e) {
                 response = null;
             }
+
+            if (response == null) return null;
 
             // Transform the response into a TeamRecents object and add to the list
             String json = "";
