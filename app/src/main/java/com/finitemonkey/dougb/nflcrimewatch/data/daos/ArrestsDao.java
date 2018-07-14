@@ -32,10 +32,13 @@ public interface ArrestsDao {
     @Query("DELETE FROM arrests")
     void deleteAllArrests();
 
+    @Query("SELECT * FROM arrests WHERE arrestStatsId=:arrestId")
+    List<Arrests> loadSpecificArrestId(int arrestId);
+
     @Query("SELECT * FROM arrests WHERE team=:teamId ORDER BY date DESC")
     LiveData<List<Arrests>> loadTeamArrests(String teamId);
 
-    @Query("SELECT * FROM arrests WHERE team=:teamId AND date=:date ORDER BY date DESC")
+    @Query("SELECT * FROM arrests WHERE team=:teamId AND date=:date ORDER BY date ASC")
     List<Arrests> checkTeamDateArrests(String teamId, String date);
 
     @Query("DELETE FROM arrests WHERE team=:teamId")
@@ -44,7 +47,7 @@ public interface ArrestsDao {
     @Query("SELECT * FROM arrests WHERE playerPosition=:position ORDER BY date DESC")
     LiveData<List<Arrests>> loadPositionArrests(String position);
 
-    @Query("SELECT * FROM arrests WHERE playerPosition=:position AND date=:date ORDER BY date DESC")
+    @Query("SELECT * FROM arrests WHERE playerPosition=:position AND date=:date ORDER BY date ASC")
     List<Arrests> checkPositionDateArrests(String position, String date);
 
     @Query("DELETE FROM arrests WHERE team=:position")
@@ -53,7 +56,7 @@ public interface ArrestsDao {
     @Query("SELECT * FROM arrests WHERE encounter=:encounter ORDER BY date DESC")
     LiveData<List<Arrests>> loadEncounterArrests(String encounter);
 
-    @Query("SELECT * FROM arrests WHERE encounter=:encounter AND date=:date ORDER BY date DESC")
+    @Query("SELECT * FROM arrests WHERE encounter=:encounter AND date=:date ORDER BY date ASC")
     List<Arrests> checkEncounterDateArrests(String encounter, String date);
 
     @Query("DELETE FROM arrests WHERE team=:encounter")

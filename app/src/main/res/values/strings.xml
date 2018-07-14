@@ -4,6 +4,8 @@
     <string name="api_scheme">http</string>
     <string name="api_authority">nflarrest.com</string>
     <string name="api_team_arrests_path">api/v1/team/arrests/</string>
+    <string name="api_position_arrests_path">api/v1/position/arrests/</string>
+    <string name="api_crime_arrests_path">api/v1/crime/arrests/</string>
     <string name="api_end_date">end_date</string>
     <string name="api_start_date">start_date</string>
     <string name="api_limit">limit</string>
