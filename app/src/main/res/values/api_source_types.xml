@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="source_type_team">0</integer>
+    <integer name="source_type_position">1</integer>
+    <integer name="source_type_crime">2</integer>
+</resources>

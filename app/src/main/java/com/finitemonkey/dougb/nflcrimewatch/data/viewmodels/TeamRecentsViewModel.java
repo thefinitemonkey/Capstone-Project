@@ -6,20 +6,20 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.util.List;
 
 public class TeamRecentsViewModel extends AndroidViewModel {
     public static final String TAG = TeamRecentsViewModel.class.getSimpleName();
 
-    private LiveData<List<TeamRecents>> mTeamRecents;
+    private LiveData<List<Recents>> mTeamRecents;
 
     public TeamRecentsViewModel(@NonNull Application application) {
         super(application);
         NFLCrimewatchDatabase db = NFLCrimewatchDatabase.getInstance(this.getApplication());
-        mTeamRecents = db.teamRecentDao().loadTeamRecents();
+        mTeamRecents = db.recentsDao().loadTeamRecents();
     }
 
-    public LiveData<List<TeamRecents>> getTeamRecents() {return mTeamRecents;}
+    public LiveData<List<Recents>> getTeamRecents() {return mTeamRecents;}
 }

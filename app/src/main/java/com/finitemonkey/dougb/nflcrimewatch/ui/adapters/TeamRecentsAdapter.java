@@ -1,7 +1,6 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -21,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.TeamRecentsViewHolder> {
 
-    private List<TeamRecents> mTeamRecents;
+    private List<Recents> mRecents;
     private int mTeamRecentsCount = 0;
     private Context mContext;
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, `yy");
@@ -32,9 +31,9 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         mListener = listener;
     }
 
-    public void setTeamRecents(List<TeamRecents> teamRecents) {
-        mTeamRecents = teamRecents;
-        mTeamRecentsCount = mTeamRecents.size();
+    public void setTeamRecents(List<Recents> recents) {
+        mRecents = recents;
+        mTeamRecentsCount = mRecents.size();
         notifyDataSetChanged();
     }
 
@@ -52,7 +51,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     public void onBindViewHolder(@NonNull TeamRecentsViewHolder holder, int position) {
 
         // Get the TeamRecents item to work from
-        TeamRecents tr = mTeamRecents.get(position);
+        Recents tr = mRecents.get(position);
 
         // Set the logo
         holder.mTeamLogo.setImageResource(tr.getLogo());
@@ -100,7 +99,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         @Override
         public void onClick(View v) {
             int clickPosition = getAdapterPosition();
-            String teamId = mTeamRecents.get(clickPosition).getTeam();
+            String teamId = mRecents.get(clickPosition).getTeam();
             mListener.onTeamRecentsHolderClick(teamId);
         }
     }

@@ -3,9 +3,7 @@ package com.finitemonkey.dougb.nflcrimewatch.utils;
 import android.content.Context;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
-import com.finitemonkey.dougb.nflcrimewatch.data.converters.DateConverter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 
 import java.util.Calendar;
 import java.util.Date;

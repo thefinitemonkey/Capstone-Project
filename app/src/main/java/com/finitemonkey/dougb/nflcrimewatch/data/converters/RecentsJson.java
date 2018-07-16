@@ -2,7 +2,7 @@ package com.finitemonkey.dougb.nflcrimewatch.data.converters;
 
 import java.util.Date;
 
-public class TeamRecentsJson {
+public class RecentsJson {
     int arrest_stats_id;
     String Date;
     String Team;

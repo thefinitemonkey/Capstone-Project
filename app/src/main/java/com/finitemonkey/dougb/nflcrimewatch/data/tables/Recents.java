@@ -7,8 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "team_recents")
-public class TeamRecents {
+@Entity(tableName = "recents")
+public class Recents {
     @PrimaryKey(autoGenerate = true) private int id;
     @ColumnInfo(name = "updated_at") private Date updatedAt;
     private int arrestStatsId;
@@ -32,15 +32,16 @@ public class TeamRecents {
     private String description;
     private String resolution;
     private int daysToLastTeamArrest;
+    private int sourceType;
 
     @Ignore
-    public TeamRecents(int arrestStatsId, Date date, String team, int logo, String teamName,
-                       String teamPreferredName, String teamCity, String teamConference,
-                       String teamDivision, String teamHexColor, String teamHexAltColor,
-                       String playerName, String playerPosition, String playerPositionName,
-                       String playerPositionType, String encounter, String category,
-                       String crimeCategoryColor, String description, String resolution,
-                       int daysToLastTeamArrest, Date updatedAt) {
+    public Recents(int arrestStatsId, Date date, String team, int logo, String teamName,
+                   String teamPreferredName, String teamCity, String teamConference,
+                   String teamDivision, String teamHexColor, String teamHexAltColor,
+                   String playerName, String playerPosition, String playerPositionName,
+                   String playerPositionType, String encounter, String category,
+                   String crimeCategoryColor, String description, String resolution,
+                   int daysToLastTeamArrest, int sourceType, Date updatedAt) {
         this.arrestStatsId = arrestStatsId;
         this.date = date;
         this.team = team;
@@ -62,16 +63,17 @@ public class TeamRecents {
         this.description = description;
         this.resolution = resolution;
         this.daysToLastTeamArrest = daysToLastTeamArrest;
+        this.sourceType = sourceType;
         this.updatedAt = updatedAt;
     }
 
-    public TeamRecents(int id, int arrestStatsId, Date date, String team, int logo, String teamName,
-                       String teamPreferredName, String teamCity, String teamConference,
-                       String teamDivision, String teamHexColor, String teamHexAltColor,
-                       String playerName, String playerPosition, String playerPositionName,
-                       String playerPositionType, String encounter, String category,
-                       String crimeCategoryColor, String description, String resolution,
-                       int daysToLastTeamArrest, Date updatedAt) {
+    public Recents(int id, int arrestStatsId, Date date, String team, int logo, String teamName,
+                   String teamPreferredName, String teamCity, String teamConference,
+                   String teamDivision, String teamHexColor, String teamHexAltColor,
+                   String playerName, String playerPosition, String playerPositionName,
+                   String playerPositionType, String encounter, String category,
+                   String crimeCategoryColor, String description, String resolution,
+                   int daysToLastTeamArrest, int sourceType, Date updatedAt) {
         this.id = id;
         this.arrestStatsId = arrestStatsId;
         this.date = date;
@@ -94,6 +96,7 @@ public class TeamRecents {
         this.description = description;
         this.resolution = resolution;
         this.daysToLastTeamArrest = daysToLastTeamArrest;
+        this.sourceType = sourceType;
         this.updatedAt = updatedAt;
     }
 
@@ -162,6 +165,9 @@ public class TeamRecents {
 
     public int getDaysToLastTeamArrest() {return daysToLastTeamArrest;}
     public void setDaysToLastTeamArrest(int daysToLastTeamArrest) {this.daysToLastTeamArrest = daysToLastTeamArrest;}
+
+    public int getSourceType() {return sourceType;}
+    public void setSourceType(int sourceType) {this.sourceType = sourceType;}
 
     public Date getUpdatedAt() {return updatedAt;}
     public void setUpdatedAt(Date updatedAt) {this.updatedAt = updatedAt;}

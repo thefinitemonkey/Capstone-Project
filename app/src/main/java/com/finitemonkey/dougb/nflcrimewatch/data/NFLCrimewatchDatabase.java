@@ -14,14 +14,14 @@ import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.DateConverter;
 import com.finitemonkey.dougb.nflcrimewatch.data.daos.ArrestsDao;
+import com.finitemonkey.dougb.nflcrimewatch.data.daos.RecentsDao;
 import com.finitemonkey.dougb.nflcrimewatch.data.daos.StadiumsDao;
-import com.finitemonkey.dougb.nflcrimewatch.data.daos.TeamRecentDao;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.utils.AppExecutors;
 
-@Database(entities = {Stadiums.class, TeamRecents.class, Arrests.class}, version = 2, exportSchema = false)
+@Database(entities = {Stadiums.class, Recents.class, Arrests.class}, version = 2, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class NFLCrimewatchDatabase extends RoomDatabase {
     private static final String TAG = NFLCrimewatchDatabase.class.getSimpleName();
@@ -57,7 +57,7 @@ public abstract class NFLCrimewatchDatabase extends RoomDatabase {
         return sInstance;
     }
 
-    public abstract TeamRecentDao teamRecentDao();
+    public abstract RecentsDao recentsDao();
 
     public abstract StadiumsDao stadiumsDao();
 

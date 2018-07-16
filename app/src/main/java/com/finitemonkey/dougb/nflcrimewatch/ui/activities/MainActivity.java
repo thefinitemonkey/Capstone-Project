@@ -1,11 +1,9 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,21 +12,16 @@ import android.util.Log;
 import android.view.View;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.network.RecentByTeamsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
-import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecentByTeamsAPI.RecentByTeamsListener,
+public class MainActivity extends AppCompatActivity implements RecentsAPI.RecentByTeamsListener,
         TeamRecentsFragment.OnFragmentInteractionListener{
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -55,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements RecentByTeamsAPI.
     }
 
     @Override
-    public void onRecentByTeamsLoadComplete(List<TeamRecents> teamRecents) {
-        for (TeamRecents tr : teamRecents
+    public void onRecentByTeamsLoadComplete(List<Recents> recents) {
+        for (Recents tr : recents
                 ) {
             Log.d(TAG, "onRecentByTeamsLoadComplete: teamId - " + tr.getTeam());
         }

@@ -3,7 +3,6 @@ package com.finitemonkey.dougb.nflcrimewatch.ui.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,11 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.TeamRecents;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.network.RecentByTeamsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.TeamRecentsAdapter;
-import com.finitemonkey.dougb.nflcrimewatch.utils.TeamRecentsUtils;
+import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -63,21 +62,21 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     private void setupTeamRecentsViewModel() {
         TeamRecentsViewModel viewModel = ViewModelProviders.of(this).get(
                 TeamRecentsViewModel.class);
-        viewModel.getTeamRecents().observe(this, new Observer<List<TeamRecents>>() {
+        viewModel.getTeamRecents().observe(this, new Observer<List<Recents>>() {
             @Override
-            public void onChanged(@Nullable List<TeamRecents> teamRecents) {
+            public void onChanged(@Nullable List<Recents> recents) {
                 // Set the adapter and see if we need a data refresh
-                mAdapter.setTeamRecents(teamRecents);
+                mAdapter.setTeamRecents(recents);
                 if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(teamRecents);
+                    checkIfUpdatedToday(recents);
                 }
             }
         });
     }
 
-    private void checkIfUpdatedToday(List<TeamRecents> teamRecents) {
+    private void checkIfUpdatedToday(List<Recents> recents) {
         // Check if the update has already been done today
-        Boolean hasBeenUpdated = TeamRecentsUtils.startCheckUpdatedInPastDay(teamRecents);
+        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(recents);
         Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
 
         // If not updated yet then kick off the update
@@ -88,8 +87,11 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strToday = dateFormat.format(today);
             String strBegin = "2000-01-01";
-            RecentByTeamsAPI recentsRetrieval = new RecentByTeamsAPI();
-            recentsRetrieval.getRecentByTeams(mContext, teamsIds, strBegin, strToday);
+            RecentsAPI recentsRetrieval = new RecentsAPI();
+            recentsRetrieval.getRecents(
+                    mContext, getResources().getInteger(R.integer.source_type_team), teamsIds,
+                    strBegin, strToday
+            );
         }
 
         mHasCheckedUpdate = true;
