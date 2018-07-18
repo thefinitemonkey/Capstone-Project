@@ -31,7 +31,6 @@ public class Recents {
     private String crimeCategoryColor;
     private String description;
     private String resolution;
-    private int daysToLastTeamArrest;
     private int sourceType;
 
     @Ignore
@@ -41,7 +40,7 @@ public class Recents {
                    String playerName, String playerPosition, String playerPositionName,
                    String playerPositionType, String encounter, String category,
                    String crimeCategoryColor, String description, String resolution,
-                   int daysToLastTeamArrest, int sourceType, Date updatedAt) {
+                   int sourceType, Date updatedAt) {
         this.arrestStatsId = arrestStatsId;
         this.date = date;
         this.team = team;
@@ -62,7 +61,6 @@ public class Recents {
         this.crimeCategoryColor = crimeCategoryColor;
         this.description = description;
         this.resolution = resolution;
-        this.daysToLastTeamArrest = daysToLastTeamArrest;
         this.sourceType = sourceType;
         this.updatedAt = updatedAt;
     }
@@ -73,7 +71,7 @@ public class Recents {
                    String playerName, String playerPosition, String playerPositionName,
                    String playerPositionType, String encounter, String category,
                    String crimeCategoryColor, String description, String resolution,
-                   int daysToLastTeamArrest, int sourceType, Date updatedAt) {
+                   int sourceType, Date updatedAt) {
         this.id = id;
         this.arrestStatsId = arrestStatsId;
         this.date = date;
@@ -95,7 +93,6 @@ public class Recents {
         this.crimeCategoryColor = crimeCategoryColor;
         this.description = description;
         this.resolution = resolution;
-        this.daysToLastTeamArrest = daysToLastTeamArrest;
         this.sourceType = sourceType;
         this.updatedAt = updatedAt;
     }
@@ -162,9 +159,6 @@ public class Recents {
 
     public String getResolution() {return resolution;}
     public void setResolution(String resolution) {this.resolution = resolution;}
-
-    public int getDaysToLastTeamArrest() {return daysToLastTeamArrest;}
-    public void setDaysToLastTeamArrest(int daysToLastTeamArrest) {this.daysToLastTeamArrest = daysToLastTeamArrest;}
 
     public int getSourceType() {return sourceType;}
     public void setSourceType(int sourceType) {this.sourceType = sourceType;}

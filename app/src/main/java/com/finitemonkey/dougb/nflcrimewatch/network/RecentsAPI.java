@@ -34,7 +34,7 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
     private JsonAdapter<List<Recents>> mJsonAdapter;
     private int mSourceType;
 
-    public void getRecents(Context context, int sourceType, String[] ids, String strBeginDate, String strEndDate) {
+    public void getRecents(Context context, int sourceType, String[] ids, String strBeginDate, String strEndDate, int limit) {
         // Store the context reference
         mContext = context;
 
@@ -50,7 +50,7 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
         mJsonAdapter = moshi.adapter(type);
         mRecents = new ArrayList<Recents>();
 
-        String limit = "1";
+        String strLimit = limit + "";
 
         /*
         Iterate over all the teams to initiate the requests for background loading
@@ -92,7 +92,7 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
             Uri uri = new Uri.Builder().scheme(scheme).authority(authority).appendEncodedPath(
                     path).appendQueryParameter(
                     endParam, strEndDate).appendQueryParameter(
-                    startParam, strBeginDate).appendQueryParameter(limitParam, limit).build();
+                    startParam, strBeginDate).appendQueryParameter(limitParam, strLimit).build();
             new RecentsAsync().execute(uri);
         }
     }
@@ -106,8 +106,8 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
     }
 
     @Override
-    public void onTeamRecentDataUpdated(Recents teamRecent) {
-        mRecents.add(teamRecent);
+    public void onRecentDataUpdated(Recents recent) {
+        mRecents.add(recent);
         decrementCount();
     }
 
@@ -119,6 +119,7 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
 
         @Override
         protected List<Recents> doInBackground(Uri... uris) {
+            Log.d(TAG, "doInBackground: " + uris[0].toString());
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(uris[0].toString()).build();
             Response response;

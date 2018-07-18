@@ -16,13 +16,15 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecentsAPI.RecentByTeamsListener,
-        TeamRecentsFragment.OnFragmentInteractionListener{
+        TeamRecentsFragment.OnFragmentInteractionListener,
+        PositionRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         // Add the TeamRecents fragment to the display by default
         Log.d(TAG, "onResume: setting up teamRecents display");
-        setTeamRecentsDisplay();
+        setPositionRecentsDisplay();
     }
 
     private void setTeamRecentsDisplay() {
@@ -72,6 +74,14 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         fm.beginTransaction().add(R.id.cl_main_display, trf).commit();
     }
 
+    private void setPositionRecentsDisplay() {
+        clearFragments();
+
+        FragmentManager fm = getSupportFragmentManager();
+        PositionRecentsFragment prf = new PositionRecentsFragment();
+        fm.beginTransaction().add(R.id.cl_main_display, prf).commit();
+    }
+
     private void clearFragments() {
         // Remove all fragments from the display
         FragmentManager fm = getSupportFragmentManager();
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         if (frags == null) return;
 
         View cl = findViewById(R.id.cl_main_display);
-        for (Fragment frag: frags) {
+        for (Fragment frag : frags) {
             if (frag.getView() == null) return;
 
             View view = (View) frag.getView().getParent();

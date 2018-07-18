@@ -33,30 +33,6 @@ public class RecentsUtils {
         }
 
         return hasBeenUpdated;
-
-        // Hold onto the context as the listener for the callback
-        //final TeamRecentsUpdateInPastDayResult listener = (TeamRecentsUpdateInPastDayResult) context;
-
-        // Set up the instance of the database if needed
-        /*
-        if (mDb == null) {
-            mDb = NFLCrimewatchDatabase.getInstance(context);
-        }
-        */
-
-        // Run the request for all recent team offenses and check last update in a Runnable
-        /*
-        AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Boolean hasBeenUpdated = false;
-                final List<TeamRecents> offenses = mDb.teamRecentDao().loadTeamRecents();
-
-                // Make the callback
-                listener.onTeamRecentsCheckResult(hasBeenUpdated);
-            }
-        });
-        */
     }
 
     public static void updateSingleRecent(final Context context, Object callback, final int sourceType, final Recents recent) {
@@ -70,6 +46,7 @@ public class RecentsUtils {
 
         // Run the requests to check the existing data records for the given recent event to see if
         // there is a match. Update if so. Delete old data and insert new if not.
+        final Boolean isTeamSource = sourceType == context.getResources().getInteger(R.integer.source_type_team);
         AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -82,12 +59,14 @@ public class RecentsUtils {
                 if (sourceType == context.getResources().getInteger(R.integer.source_type_team)) {
                     ltr = mDb.recentsDao().checkTeamDateOccurrences(
                             ntr.getTeam(),
-                            DateConverter.toString(ntr.getDate())
+                            DateConverter.toString(ntr.getDate()),
+                            sourceType
                     );
                 } else if (sourceType == context.getResources().getInteger(R.integer.source_type_position)) {
                     ltr = mDb.recentsDao().checkPositionDateOccurrences(
                             ntr.getPlayerPosition(),
-                            DateConverter.toString(ntr.getDate())
+                            DateConverter.toString(ntr.getDate()),
+                            sourceType
                     );
                 } else if (sourceType == context.getResources().getInteger(R.integer.source_type_crime)) {
                     ltr = mDb.recentsDao().checkCategoryDateOccurrences(
@@ -103,45 +82,48 @@ public class RecentsUtils {
                 if (ltr.size() < 1)
                 {
                     if (ntr != null) {
-                        mDb.recentsDao().insertTeamRecent(ntr);
+                        mDb.recentsDao().insertRecent(ntr);
 
-                        listener.onTeamRecentDataUpdated(ntr);
+                        listener.onRecentDataUpdated(ntr);
                         return;
                     }
                 };
 
                 // If the first occurrence doesn't match the date of the one passed in then
-                // delete occurrences for the team
-                if (!ltr.get(0).getDate().equals(ntr.getDate())) {
+                // delete occurrences for the team (only for recent teams data)
+                if (isTeamSource && !ltr.get(0).getDate().equals(ntr.getDate())) {
                     mDb.recentsDao().deleteTeamRecentsForTeam(ntr.getTeam());
                     // Add the new occurrence and exit
-                    mDb.recentsDao().insertTeamRecent(ntr);
+                    mDb.recentsDao().insertRecent(ntr);
 
-                    listener.onTeamRecentDataUpdated(ntr);
+                    listener.onRecentDataUpdated(ntr);
                     return;
                 }
 
                 // If it's the same date then check that this occurrence isn't already in the list
                 for (Recents tr:ltr
                      ) {
+                    // Anything before the date of this occurrence isn't going to be the same occurrence
+                    if (tr.getDate().before(ntr.getDate())) break;
+
                     if(tr.getArrestStatsId() == ntr.getArrestStatsId()) {
                         // We just need to update this particular record
                         tr.setUpdatedAt(ntr.getUpdatedAt());
-                        mDb.recentsDao().updateTeamRecent(tr);
+                        mDb.recentsDao().updateRecent(tr);
 
-                        listener.onTeamRecentDataUpdated(tr);
+                        listener.onRecentDataUpdated(tr);
                         return;
                     }
                 }
 
                 // This new occurrence doesn't exist yet so it needs to be added
-                mDb.recentsDao().insertTeamRecent(ntr);
-                listener.onTeamRecentDataUpdated(ntr);
+                mDb.recentsDao().insertRecent(ntr);
+                listener.onRecentDataUpdated(ntr);
             }
         });
     }
 
     public interface TeamRecentUpdateData {
-        void onTeamRecentDataUpdated(Recents teamRecent);
+        void onRecentDataUpdated(Recents teamRecent);
     }
 }
