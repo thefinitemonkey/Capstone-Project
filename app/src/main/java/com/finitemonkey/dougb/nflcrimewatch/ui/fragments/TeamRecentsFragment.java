@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
@@ -62,9 +63,9 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     private void setupTeamRecentsViewModel() {
         TeamRecentsViewModel viewModel = ViewModelProviders.of(this).get(
                 TeamRecentsViewModel.class);
-        viewModel.getTeamRecents().observe(this, new Observer<List<Recents>>() {
+        viewModel.getTeamRecents().observe(this, new Observer<List<Arrests>>() {
             @Override
-            public void onChanged(@Nullable List<Recents> recents) {
+            public void onChanged(@Nullable List<Arrests> recents) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setTeamRecents(recents);
                 if (!mHasCheckedUpdate) {
@@ -74,9 +75,9 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
         });
     }
 
-    private void checkIfUpdatedToday(List<Recents> recents) {
+    private void checkIfUpdatedToday(List<Arrests> arrests) {
         // Check if the update has already been done today
-        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(recents);
+        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(arrests);
         Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
 
         // If not updated yet then kick off the update

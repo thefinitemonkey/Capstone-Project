@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.util.List;
@@ -13,13 +14,13 @@ import java.util.List;
 public class TeamRecentsViewModel extends AndroidViewModel {
     public static final String TAG = TeamRecentsViewModel.class.getSimpleName();
 
-    private LiveData<List<Recents>> mTeamRecents;
+    private LiveData<List<Arrests>> mTeamRecents;
 
     public TeamRecentsViewModel(@NonNull Application application) {
         super(application);
         NFLCrimewatchDatabase db = NFLCrimewatchDatabase.getInstance(this.getApplication());
-        mTeamRecents = db.recentsDao().loadTeamRecents();
+        mTeamRecents = db.arrestsDao().loadRecentTeamArrests();
     }
 
-    public LiveData<List<Recents>> getTeamRecents() {return mTeamRecents;}
+    public LiveData<List<Arrests>> getTeamRecents() {return mTeamRecents;}
 }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     }
 
     @Override
-    public void onRecentByTeamsLoadComplete(List<Recents> recents) {
-        for (Recents tr : recents
+    public void onRecentByTeamsLoadComplete(List<Arrests> arrests) {
+        for (Arrests tr : arrests
                 ) {
             Log.d(TAG, "onRecentByTeamsLoadComplete: teamId - " + tr.getTeam());
         }

@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.network.ArrestsAPI;
@@ -43,7 +45,7 @@ public class SourcedOffensesFragment extends Fragment {
     private SourcedOffensesAdapter mAdapter;
     private Context mContext;
     private Boolean mHasCheckedUpdate = false;
-    private String mSourceId = "";
+    private String mParamId = "";
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,7 +69,7 @@ public class SourcedOffensesFragment extends Fragment {
         Application application = this.getActivity().getApplication();
         TeamArrestsViewModel viewModel =
                 ViewModelProviders.of(this, new TeamArrestsViewModelFactory(
-                        application, mSourceId)
+                        application, mParamId)
                 ).get(TeamArrestsViewModel.class);
         viewModel.getTeamArrests().observe(this, new Observer<List<Arrests>>() {
             @Override
@@ -75,17 +77,35 @@ public class SourcedOffensesFragment extends Fragment {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setArrests(arrests);
                 if (!mHasCheckedUpdate) {
-                    String teamId = "";
-                    checkIfUpdatedToday(arrests, mSourceId);
+                    checkIfUpdatedToday(arrests, mParamId);
                 }
             }
         });
     }
 
-    private void checkIfUpdatedToday(List<Arrests> arrests, String sourceId) {
+    private void setupPositionArrestsViewModel() {
+        Application application = this.getActivity().getApplication();
+        PositionArrestsViewModel viewModel = ViewModelProviders.of(
+                this, new PositionArrestsViewModelFactory(
+                        application, mParamId)).get(PositionArrestsViewModel.class);
+        viewModel.getPositionArrests().observe(this, new Observer<List<Arrests>>() {
+            @Override
+            public void onChanged(@Nullable List<Arrests> arrests) {
+                mAdapter.setArrests(arrests);
+                if (!mHasCheckedUpdate) {
+                    checkIfUpdatedToday(arrests, mParamId);
+                }
+            }
+        });
+    }
+
+    private void checkIfUpdatedToday(List<Arrests> arrests, String paramId) {
         // Check if the update has already been done today
         Boolean hasBeenUpdated = ArrestsUtils.startCheckUpdatedInPastDay(arrests);
-        Log.d(TAG, "onCheckIfUpdatedToday (sourced offenses): arrests data has been updated today is " + hasBeenUpdated);
+        Log.d(
+                TAG,
+                "onCheckIfUpdatedToday (sourced offenses): arrests data has been updated today is " + hasBeenUpdated
+        );
 
         // If not updated yet then kick off the update
         if (!hasBeenUpdated) {
@@ -96,7 +116,7 @@ public class SourcedOffensesFragment extends Fragment {
             String strToday = dateFormat.format(today);
             String strBegin = "2000-01-01";
             ArrestsAPI recentsRetrieval = new ArrestsAPI();
-            recentsRetrieval.getArrestsByTeam(mContext, sourceId, strBegin, strToday);
+            recentsRetrieval.getArrestsByTeam(mContext, paramId, strBegin, strToday);
         }
 
         mHasCheckedUpdate = true;
@@ -130,7 +150,7 @@ public class SourcedOffensesFragment extends Fragment {
         }
 
         // Get the source ID for future use
-        mSourceId = getArguments().getString(getResources().getString(R.string.source_id));
+        mParamId = getArguments().getString(getResources().getString(R.string.source_id));
 
         // Set up the appropriate viewModel
         int sourceType = getArguments().getInt(
@@ -141,6 +161,7 @@ public class SourcedOffensesFragment extends Fragment {
                 break;
             }
             case (R.string.source_position): {
+                setupPositionArrestsViewModel();
                 break;
             }
             case (R.string.source_crime): {

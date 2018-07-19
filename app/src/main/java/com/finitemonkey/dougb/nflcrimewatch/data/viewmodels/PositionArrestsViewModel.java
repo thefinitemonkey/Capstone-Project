@@ -6,21 +6,20 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 
 import java.util.List;
 
-public class PositionCountsViewModel extends AndroidViewModel {
-    public static final String TAG = PositionCountsViewModel.class.getSimpleName();
+public class PositionArrestsViewModel extends AndroidViewModel {
+    public static final String TAG = PositionArrestsViewModel.class.getSimpleName();
 
-    private LiveData<List<Positions>> mPositionRecents;
+    private LiveData<List<Arrests>> mArrests;
 
-    public PositionCountsViewModel(@NonNull Application application) {
+    public PositionArrestsViewModel(@NonNull Application application, String position) {
         super(application);
         NFLCrimewatchDatabase db = NFLCrimewatchDatabase.getInstance(this.getApplication());
-        mPositionRecents = db.arrestsDao().loadPositionArrestCounts();
+        mArrests = db.arrestsDao().loadPositionArrests(position);
     }
 
-    public LiveData<List<Positions>> getPositionCounts() {return mPositionRecents;}
+    public LiveData<List<Arrests>> getPositionArrests() {return mArrests;}
 }

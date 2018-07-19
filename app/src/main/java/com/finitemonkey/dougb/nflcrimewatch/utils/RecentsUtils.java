@@ -6,6 +6,7 @@ import android.util.Log;
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.DateConverter;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.util.Calendar;
@@ -18,7 +19,7 @@ public class RecentsUtils {
 
     // This function does the work to check in the team_recents (TeamRecents) table to
     // verify whether the data is more than a day old
-    public static Boolean startCheckUpdatedInPastDay(List<Recents> recents) {
+    public static Boolean startCheckUpdatedInPastDay(List<Arrests> recents) {
         // If there are no results then we've never loaded. Otherwise check
         // to see how long since the last update.'
         Boolean hasBeenUpdated = false;

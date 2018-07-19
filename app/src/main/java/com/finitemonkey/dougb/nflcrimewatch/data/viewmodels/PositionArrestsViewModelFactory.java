@@ -5,11 +5,11 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
-public class PositionCountsViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+public class PositionArrestsViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
-    private int mParam;
+    private String mParam;
 
-    public PositionCountsViewModelFactory(Application application, int param) {
+    public PositionArrestsViewModelFactory(Application application, String param) {
         mApplication = application;
         mParam = param;
     }
@@ -17,6 +17,6 @@ public class PositionCountsViewModelFactory extends ViewModelProvider.NewInstanc
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new PositionCountsViewModel(mApplication);
+        return (T) new PositionArrestsViewModel(mApplication, mParam);
     }
 }

@@ -81,12 +81,12 @@ public class PositionRecentsAdapter extends RecyclerView.Adapter<PositionRecents
         @Override
         public void onClick(View v) {
             int clickPosition = getAdapterPosition();
-            String teamId = mPositions.get(clickPosition).getPlayerPosition();
-            mListener.onPositionRecentsHolderClick(teamId);
+            String positionId = mPositions.get(clickPosition).getPlayerPosition();
+            mListener.onPositionRecentsHolderClick(positionId);
         }
     }
 
     public interface PositionRecentsHolderClickListener {
-        void onPositionRecentsHolderClick(String teamId);
+        void onPositionRecentsHolderClick(String positionId);
     }
 }

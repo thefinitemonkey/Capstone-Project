@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionCountsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionCountsViewModelFactory;
@@ -69,8 +70,7 @@ public class PositionRecentsFragment extends Fragment implements PositionRecents
         int sourceId = getResources().getInteger(R.integer.source_type_position);
 
         PositionCountsViewModel viewModel = ViewModelProviders.of(
-                this, new PositionCountsViewModelFactory(application, sourceId)).get(
-                PositionCountsViewModel.class);
+                this).get(PositionCountsViewModel.class);
         viewModel.getPositionCounts().observe(this, new Observer<List<Positions>>() {
             @Override
             public void onChanged(@Nullable List<Positions> positions) {
@@ -83,9 +83,9 @@ public class PositionRecentsFragment extends Fragment implements PositionRecents
     private void setupPositionRecentsViewModel() {
         PositionRecentsViewModel viewModel = ViewModelProviders.of(this).get(
                 PositionRecentsViewModel.class);
-        viewModel.getPositionRecents().observe(this, new Observer<List<Recents>>() {
+        viewModel.getPositionRecents().observe(this, new Observer<List<Arrests>>() {
             @Override
-            public void onChanged(@Nullable List<Recents> recents) {
+            public void onChanged(@Nullable List<Arrests> recents) {
                 if (!mHasCheckedUpdate) {
                     checkIfUpdatedToday(recents);
                 }
@@ -93,7 +93,7 @@ public class PositionRecentsFragment extends Fragment implements PositionRecents
         });
     }
 
-    private void checkIfUpdatedToday(List<Recents> recents) {
+    private void checkIfUpdatedToday(List<Arrests> recents) {
         // Check if the update has already been done today
         Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(recents);
         Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
@@ -169,12 +169,11 @@ public class PositionRecentsFragment extends Fragment implements PositionRecents
     }
 
     @Override
-    public void onPositionRecentsHolderClick(String teamId) {
-        mListener.onFragmentInteraction(R.string.source_team, teamId);
+    public void onPositionRecentsHolderClick(String position) {
+        mListener.onFragmentInteraction(R.string.source_position, position);
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(int sourceType, String teamId);
+        void onFragmentInteraction(int sourceType, String position);
     }
 }

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +21,7 @@ import butterknife.ButterKnife;
 
 public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.TeamRecentsViewHolder> {
 
-    private List<Recents> mRecents;
+    private List<Arrests> mRecents;
     private int mTeamRecentsCount = 0;
     private Context mContext;
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, `yy");
@@ -31,7 +32,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
         mListener = listener;
     }
 
-    public void setTeamRecents(List<Recents> recents) {
+    public void setTeamRecents(List<Arrests> recents) {
         mRecents = recents;
         mTeamRecentsCount = mRecents.size();
         notifyDataSetChanged();
@@ -51,7 +52,7 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     public void onBindViewHolder(@NonNull TeamRecentsViewHolder holder, int position) {
 
         // Get the TeamRecents item to work from
-        Recents tr = mRecents.get(position);
+        Arrests tr = mRecents.get(position);
 
         // Set the logo
         holder.mTeamLogo.setImageResource(tr.getLogo());

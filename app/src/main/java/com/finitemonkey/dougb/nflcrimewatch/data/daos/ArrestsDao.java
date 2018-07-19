@@ -8,6 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface ArrestsDao {
     void insertArrest(Arrests arrest);
 
     @Insert
-    void insertAll(Arrests... arrest);
+    void insertAll(Arrests... arrests);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateArrest(Arrests arrest);
@@ -38,28 +39,41 @@ public interface ArrestsDao {
     @Query("SELECT * FROM arrests WHERE team=:teamId ORDER BY date DESC")
     LiveData<List<Arrests>> loadTeamArrests(String teamId);
 
-    @Query("SELECT * FROM arrests WHERE team=:teamId AND date=:date ORDER BY date ASC")
-    List<Arrests> checkTeamDateArrests(String teamId, String date);
-
-    @Query("DELETE FROM arrests WHERE team=:teamId")
-    void deleteArrestsForTeam(String teamId);
+    @Query("SELECT * FROM arrests WHERE date = (SELECT max(date) from arrests as a " +
+            "WHERE a.team=arrests.team) ORDER BY date DESC")
+    LiveData<List<Arrests>> loadRecentTeamArrests();
 
     @Query("SELECT * FROM arrests WHERE playerPosition=:position ORDER BY date DESC")
     LiveData<List<Arrests>> loadPositionArrests(String position);
 
+    @Query("SELECT * FROM arrests WHERE date = (SELECT max(date) from arrests as a " +
+            "WHERE a.playerPosition=arrests.playerPosition) ORDER BY date DESC")
+    LiveData<List<Arrests>> loadRecentPositionArrests();
+
+    @Query("SELECT DISTINCT playerPosition, playerPositionName, playerPositionType, Count(arrestStatsId) AS arrestCount FROM Arrests " +
+            "GROUP BY playerPosition ORDER BY playerPositionName ASC")
+    LiveData<List<Positions>> loadPositionArrestCounts();
+
+    @Query("SELECT * FROM arrests WHERE team=:teamId AND date=:date ORDER BY date ASC")
+    List<Arrests> checkTeamDateArrests(String teamId, String date);
+
     @Query("SELECT * FROM arrests WHERE playerPosition=:position AND date=:date ORDER BY date ASC")
     List<Arrests> checkPositionDateArrests(String position, String date);
-
-    @Query("DELETE FROM arrests WHERE team=:position")
-    void deleteArrestsForPosition(String position);
-
-    @Query("SELECT * FROM arrests WHERE encounter=:encounter ORDER BY date DESC")
-    LiveData<List<Arrests>> loadEncounterArrests(String encounter);
 
     @Query("SELECT * FROM arrests WHERE encounter=:encounter AND date=:date ORDER BY date ASC")
     List<Arrests> checkEncounterDateArrests(String encounter, String date);
 
-    @Query("DELETE FROM arrests WHERE team=:encounter")
-    void deleteArrestsForEncounter(String encounter);
+    @Query("DELETE FROM arrests WHERE team=:team")
+    int deleteTeamArrests(String team);
+
+    @Query("DELETE FROM arrests WHERE playerPosition=:position")
+    int deletePositionArrests(String position);
+
+    @Query("DELETE FROM arrests WHERE encounter=:crimeId")
+    int deleteCrimeArrests(String crimeId);
+
+    @Query("SELECT * FROM arrests WHERE encounter=:encounter ORDER BY date DESC")
+    LiveData<List<Arrests>> loadEncounterArrests(String encounter);
+
 
 }

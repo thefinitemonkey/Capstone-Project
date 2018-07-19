@@ -1,7 +1,10 @@
 package com.finitemonkey.dougb.nflcrimewatch.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 
+import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 
@@ -10,8 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 public class ArrestsUtils {
-    private static NFLCrimewatchDatabase mDb;
     private static final String TAG = ArrestsUtils.class.getSimpleName();
+    private static NFLCrimewatchDatabase mDb;
 
     // This function does the work to check in the arrests (Arrests) table to
     // verify whether the data is more than a day old
@@ -32,6 +35,53 @@ public class ArrestsUtils {
         }
 
         return hasBeenUpdated;
+    }
+
+    public static void updateGroupArrests(final Context context, Object callback, final int sourceType,
+                                          final String sourceParam, final List<Arrests> arrests) {
+        // Hold onto the context as the listener for the callback
+        final ArrestUpdateData listener = (ArrestUpdateData) callback;
+
+        // Set up the instance of the database if needed
+        if (mDb == null) {
+            mDb = NFLCrimewatchDatabase.getInstance(context);
+        }
+
+        // Run the requests to delete all the matching arrest records and then insert all
+        // the new set of records
+        AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Date newUpdate = Calendar.getInstance().getTime();
+                for (Arrests arrest: arrests
+                     ) {
+                    arrest.setUpdatedAt(newUpdate);
+                }
+
+                // Delete the properly matching arrests
+                int count;
+                Resources resources = context.getResources();
+                int typeTeam = resources.getInteger(R.integer.source_type_team);
+                int typePosition = resources.getInteger(R.integer.source_type_position);
+                int typeCrime = resources.getInteger(R.integer.source_type_crime);
+
+                if (sourceType == typeTeam) {
+                    count = mDb.arrestsDao().deleteTeamArrests(sourceParam);
+                } else if (sourceType == typePosition) {
+                    count = mDb.arrestsDao().deletePositionArrests(sourceParam);
+                } else if (sourceType == typeCrime) {
+                    count = mDb.arrestsDao().deleteCrimeArrests(sourceParam);
+                } else {
+                    Log.d(TAG, "run: unknown sourceType " + sourceType);
+                    return;
+                }
+
+                // Insert all the new arrests
+                Arrests[] arrestsArr = new Arrests[arrests.size()];
+                arrestsArr = arrests.toArray(arrestsArr);
+                mDb.arrestsDao().insertAll(arrestsArr);
+            }
+        });
     }
 
     public static void updateSingleArrest(Context context, Object callback, final Arrests arrests) {
@@ -56,8 +106,7 @@ public class ArrestsUtils {
                 List<Arrests> la = mDb.arrestsDao().loadSpecificArrestId(na.getArrestStatsId());
 
                 // If there isn't anything in the list then add the new event and we're done
-                if (la.size() < 1)
-                {
+                if (la.size() < 1) {
                     if (na != null) {
                         mDb.arrestsDao().insertArrest(na);
 
@@ -74,6 +123,6 @@ public class ArrestsUtils {
     }
 
     public interface ArrestUpdateData {
-        void onArrestDataUpdated(Arrests arrest);
+        void onArrestDataUpdated(Arrests arrests);
     }
 }

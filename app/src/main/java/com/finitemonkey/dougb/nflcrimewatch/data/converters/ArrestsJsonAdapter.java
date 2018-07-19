@@ -33,14 +33,6 @@ public class ArrestsJsonAdapter {
         return arrests;
     }
 
-    @FromJson
-    public int intFromJson(@Nullable Integer value) {
-        if (value == null) {
-            return 0;
-        }
-        return value;
-    }
-
     @ToJson ArrestsJson arrestsToJson(Arrests ar) {
         ArrestsJson aj = new ArrestsJson();
 

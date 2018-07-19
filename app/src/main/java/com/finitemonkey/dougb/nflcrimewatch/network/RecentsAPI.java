@@ -7,8 +7,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.converters.ArrestsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.RecentsJsonAdapter;
+import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
+import com.finitemonkey.dougb.nflcrimewatch.utils.ArrestsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Logos;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.squareup.moshi.JsonAdapter;
@@ -24,14 +27,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
+public class RecentsAPI implements ArrestsUtils.ArrestUpdateData {
     private static final String TAG = RecentsAPI.class.getSimpleName();
     private final RecentsAPI recentApiRef = this;
     private Context mContext;
     private int mCounter;
-    private List<Recents> mRecents;
+    private List<Arrests> mRecents;
     private RecentByTeamsListener mListener;
-    private JsonAdapter<List<Recents>> mJsonAdapter;
+    private JsonAdapter<List<Arrests>> mJsonAdapter;
     private int mSourceType;
 
     public void getRecents(Context context, int sourceType, String[] ids, String strBeginDate, String strEndDate, int limit) {
@@ -45,10 +48,10 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
         mCounter = ids.length;
 
         // Set up the Moshi adapter and the list of TeamRecents
-        Moshi moshi = new Moshi.Builder().add(new RecentsJsonAdapter()).build();
-        Type type = Types.newParameterizedType(List.class, Recents.class);
+        Moshi moshi = new Moshi.Builder().add(new ArrestsJsonAdapter()).build();
+        Type type = Types.newParameterizedType(List.class, Arrests.class);
         mJsonAdapter = moshi.adapter(type);
-        mRecents = new ArrayList<Recents>();
+        mRecents = new ArrayList<Arrests>();
 
         String strLimit = limit + "";
 
@@ -87,12 +90,12 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
             String path = apiPath + paramId;
             String endParam = resources.getString(R.string.api_end_date);
             String startParam = resources.getString(R.string.api_start_date);
-            String limitParam = resources.getString(R.string.api_limit);
+            //String limitParam = resources.getString(R.string.api_limit);
 
             Uri uri = new Uri.Builder().scheme(scheme).authority(authority).appendEncodedPath(
                     path).appendQueryParameter(
                     endParam, strEndDate).appendQueryParameter(
-                    startParam, strBeginDate).appendQueryParameter(limitParam, strLimit).build();
+                    startParam, strBeginDate).build();
             new RecentsAsync().execute(uri);
         }
     }
@@ -106,19 +109,19 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
     }
 
     @Override
-    public void onRecentDataUpdated(Recents recent) {
-        mRecents.add(recent);
+    public void onArrestDataUpdated(Arrests arrests) {
+        mRecents.add(arrests);
         decrementCount();
     }
 
     public interface RecentByTeamsListener {
-        void onRecentByTeamsLoadComplete(List<Recents> tr);
+        void onRecentByTeamsLoadComplete(List<Arrests> tr);
     }
 
-    private class RecentsAsync extends AsyncTask<Uri, Boolean, List<Recents>> {
+    private class RecentsAsync extends AsyncTask<Uri, Boolean, List<Arrests>> {
 
         @Override
-        protected List<Recents> doInBackground(Uri... uris) {
+        protected List<Arrests> doInBackground(Uri... uris) {
             Log.d(TAG, "doInBackground: " + uris[0].toString());
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(uris[0].toString()).build();
@@ -138,7 +141,7 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
             } catch (IOException e) {
                 json = "[{\"response\":\"error\"}]";
             }
-            List<Recents> tr = null;
+            List<Arrests> tr = null;
             try {
                 tr = mJsonAdapter.fromJson(json);
             } catch (IOException e) {
@@ -149,16 +152,32 @@ public class RecentsAPI implements RecentsUtils.TeamRecentUpdateData {
         }
 
         @Override
-        protected void onPostExecute(List<Recents> tr) {
+        protected void onPostExecute(List<Arrests> tr) {
             super.onPostExecute(tr);
 
             if (tr != null) {
-                for (Recents trItem : tr
+                for (Arrests trItem : tr
                         ) {
                     trItem.setLogo(Logos.lookupIdByTeam(trItem.getTeam()));
-                    trItem.setSourceType(mSourceType);
-                    RecentsUtils.updateSingleRecent(mContext, recentApiRef, mSourceType, trItem);
                 }
+
+                String sourceParam;
+                Resources resources = mContext.getResources();
+                int tapValue = resources.getInteger(R.integer.source_type_team);
+                int papValue = resources.getInteger(R.integer.source_type_position);
+                int capValue = resources.getInteger(R.integer.source_type_crime);
+
+                if (mSourceType == tapValue) {
+                    sourceParam = tr.get(0).getTeam();
+                } else if (mSourceType == papValue) {
+                    sourceParam = tr.get(0).getPlayerPosition();
+                } else if (mSourceType == capValue) {
+                    sourceParam = tr.get(0).getEncounter();
+                } else {
+                    return;
+                }
+
+                ArrestsUtils.updateGroupArrests(mContext, recentApiRef, mSourceType, sourceParam, tr);
             }
         }
 
