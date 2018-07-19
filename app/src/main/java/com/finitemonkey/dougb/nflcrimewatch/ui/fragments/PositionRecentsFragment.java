@@ -18,13 +18,10 @@ import android.view.ViewGroup;
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionCountsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionCountsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.PositionRecentsAdapter;
-import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.TeamRecentsAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 
 import java.text.SimpleDateFormat;

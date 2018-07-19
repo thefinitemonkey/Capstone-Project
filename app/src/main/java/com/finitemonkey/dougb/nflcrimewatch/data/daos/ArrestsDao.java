@@ -8,6 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Crimes;
 import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 
@@ -50,18 +51,20 @@ public interface ArrestsDao {
             "WHERE a.playerPosition=arrests.playerPosition) ORDER BY date DESC")
     LiveData<List<Arrests>> loadRecentPositionArrests();
 
-    @Query("SELECT DISTINCT playerPosition, playerPositionName, playerPositionType, Count(arrestStatsId) AS arrestCount FROM Arrests " +
-            "GROUP BY playerPosition ORDER BY playerPositionName ASC")
+    @Query("SELECT DISTINCT playerPosition, playerPositionName, playerPositionType, Count(arrestStatsId) AS arrestCount FROM arrests " +
+            "GROUP BY playerPosition ORDER BY arrestCount DESC")
     LiveData<List<Positions>> loadPositionArrestCounts();
 
-    @Query("SELECT * FROM arrests WHERE team=:teamId AND date=:date ORDER BY date ASC")
-    List<Arrests> checkTeamDateArrests(String teamId, String date);
+    @Query("SELECT * FROM arrests WHERE encounter=:crimeId ORDER BY date DESC")
+    LiveData<List<Arrests>> loadCrimeArrests(String crimeId);
 
-    @Query("SELECT * FROM arrests WHERE playerPosition=:position AND date=:date ORDER BY date ASC")
-    List<Arrests> checkPositionDateArrests(String position, String date);
+    @Query("SELECT * FROM arrests WHERE date = (SELECT max(date) FROM arrests as a " +
+            "WHERE a.encounter=arrests.encounter) ORDER BY date DESC")
+    LiveData<List<Arrests>> loadRecentCrimeArrests();
 
-    @Query("SELECT * FROM arrests WHERE encounter=:encounter AND date=:date ORDER BY date ASC")
-    List<Arrests> checkEncounterDateArrests(String encounter, String date);
+    @Query("SELECT DISTINCT encounter, category, crimeCategoryColor, Count(arrestStatsId) AS arrestCount FROM arrests " +
+            "GROUP BY encounter ORDER BY arrestCount DESC")
+    LiveData<List<Crimes>> loadCrimeArrestCounts();
 
     @Query("DELETE FROM arrests WHERE team=:team")
     int deleteTeamArrests(String team);
