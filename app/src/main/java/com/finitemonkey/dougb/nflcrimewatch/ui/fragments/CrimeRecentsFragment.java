@@ -68,7 +68,7 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
 
     private void setupCrimeCountsViewModel() {
         Application application = getActivity().getApplication();
-        int sourceId = getResources().getInteger(R.integer.source_type_position);
+        int sourceId = getResources().getInteger(R.integer.source_type_crime);
 
         CrimesCountsViewModel viewModel = ViewModelProviders.of(
                 this).get(CrimesCountsViewModel.class);
@@ -109,7 +109,7 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
             String strBegin = "2000-01-01";
             RecentsAPI recentsRetrieval = new RecentsAPI();
             recentsRetrieval.getRecents(
-                    mContext, getResources().getInteger(R.integer.source_type_position),
+                    mContext, getResources().getInteger(R.integer.source_type_crime),
                     positionIds,
                     strBegin, strToday, 100
             );
@@ -170,8 +170,8 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
     }
 
     @Override
-    public void onCrimeRecentsHolderClick(String position) {
-        mListener.onFragmentInteraction(R.string.source_position, position);
+    public void onCrimeRecentsHolderClick(String crime) {
+        mListener.onFragmentInteraction(R.string.source_crime, crime);
     }
 
     public interface OnFragmentInteractionListener {

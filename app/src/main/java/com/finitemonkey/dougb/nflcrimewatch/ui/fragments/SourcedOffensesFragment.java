@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.CrimesArrestsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.CrimesArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
@@ -99,6 +101,22 @@ public class SourcedOffensesFragment extends Fragment {
         });
     }
 
+    private void setupCrimeArrestsViewModel() {
+        Application application = this.getActivity().getApplication();
+        CrimesArrestsViewModel viewModel = ViewModelProviders.of(
+                this, new CrimesArrestsViewModelFactory(application, mParamId)
+        ).get(CrimesArrestsViewModel.class);
+        viewModel.getCrimeArrests().observe(this, new Observer<List<Arrests>>() {
+            @Override
+            public void onChanged(@Nullable List<Arrests> arrests) {
+                mAdapter.setArrests(arrests);
+                if (!mHasCheckedUpdate) {
+                    checkIfUpdatedToday(arrests, mParamId);
+                }
+            }
+        });
+    }
+
     private void checkIfUpdatedToday(List<Arrests> arrests, String paramId) {
         // Check if the update has already been done today
         Boolean hasBeenUpdated = ArrestsUtils.startCheckUpdatedInPastDay(arrests);
@@ -165,6 +183,7 @@ public class SourcedOffensesFragment extends Fragment {
                 break;
             }
             case (R.string.source_crime): {
+                setupCrimeArrestsViewModel();
                 break;
             }
         }

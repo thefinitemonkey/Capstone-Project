@@ -21,5 +21,5 @@ public class CrimesArrestsViewModel extends AndroidViewModel {
         mArrests = db.arrestsDao().loadCrimeArrests(crime);
     }
 
-    public LiveData<List<Arrests>> getPositionArrests() {return mArrests;}
+    public LiveData<List<Arrests>> getCrimeArrests() {return mArrests;}
 }
