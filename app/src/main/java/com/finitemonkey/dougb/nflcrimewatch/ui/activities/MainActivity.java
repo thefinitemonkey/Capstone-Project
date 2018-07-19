@@ -17,6 +17,7 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.CrimeRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
@@ -25,7 +26,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecentsAPI.RecentByTeamsListener,
         TeamRecentsFragment.OnFragmentInteractionListener,
-        PositionRecentsFragment.OnFragmentInteractionListener {
+        PositionRecentsFragment.OnFragmentInteractionListener,
+        CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         // Add the TeamRecents fragment to the display by default
         Log.d(TAG, "onResume: setting up teamRecents display");
-        setPositionRecentsDisplay();
+        setCrimeRecentsDisplay();
     }
 
     private void setTeamRecentsDisplay() {
@@ -81,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         FragmentManager fm = getSupportFragmentManager();
         PositionRecentsFragment prf = new PositionRecentsFragment();
         fm.beginTransaction().add(R.id.cl_main_display, prf).commit();
+    }
+
+    private void setCrimeRecentsDisplay() {
+        clearFragments();
+
+        FragmentManager fm = getSupportFragmentManager();
+        CrimeRecentsFragment crf = new CrimeRecentsFragment();
+        fm.beginTransaction().add(R.id.cl_main_display, crf).commit();
     }
 
     private void clearFragments() {
