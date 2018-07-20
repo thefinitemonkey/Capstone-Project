@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_player_name">#242424</color>
     <color name="color_team_name">#484848</color>
+    <color name="color_header_nav_text">#fff</color>
 </resources>

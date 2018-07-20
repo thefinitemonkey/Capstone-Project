@@ -1,15 +1,22 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
@@ -30,22 +37,91 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements RecentsAPI.RecentByTeamsListener,
         TeamRecentsFragment.OnFragmentInteractionListener,
         PositionRecentsFragment.OnFragmentInteractionListener,
         CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static Boolean mHasCheckedUpdate = false;
+    @BindView(R.id.drawer_main)
+    DrawerLayout mDrawer;
+    @BindView(R.id.nav_view_main)
+    NavigationView mNavView;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    private Menu mNavMenu;
+    /*
+    @BindView(R.id.nav_menu_item_team)
+    MenuItem mTeamMenu;
+    @BindView(R.id.nav_menu_item_position)
+    MenuItem mPositionMenu;
+    @BindView(R.id.nav_menu_item_crime)
+    MenuItem mCrimeMenu;
+    int mTMId;
+    int mPMId;
+    int mCMId;
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
+        /*
+        mTMId = mTeamMenu.getItemId();
+        mPMId = mPositionMenu.getItemId();
+        mCMId = mCrimeMenu.getItemId();
+        */
+
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+
+        mNavView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        // Check the item, close the drawer, and change the view
+                        handleNavClick(item);
+                        mDrawer.closeDrawers();
+
+                        return true;
+                    }
+                });
+        mNavMenu = mNavView.getMenu();
+
 
         setupClosestTeamViewModel();
         setupPositionRecentsViewModel();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home: {
+                mDrawer.openDrawer(GravityCompat.START);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void handleNavClick(MenuItem item) {
+        if (item == null) return;
+
+        item.setChecked(true);
+        int selectedId = item.getItemId();
+
+        if (selectedId == R.id.nav_menu_item_team) {
+            setTeamRecentsDisplay();
+        } else if (selectedId == R.id.nav_menu_item_position) {
+            setPositionRecentsDisplay();
+        } else if (selectedId == R.id.nav_menu_item_crime) {
+            setCrimeRecentsDisplay();
+        }
     }
 
     private void setupClosestTeamViewModel() {
@@ -76,7 +152,8 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         // Add the TeamRecents fragment to the display by default
         Log.d(TAG, "onResume: setting up teamRecents display");
-        setTeamRecentsDisplay();
+        MenuItem mi = (MenuItem) mNavMenu.findItem(R.id.nav_menu_item_team);
+        handleNavClick(mi);
     }
 
     private void setTeamRecentsDisplay() {
