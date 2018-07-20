@@ -9,8 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Crimes;
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
+import com.finitemonkey.dougb.nflcrimewatch.data.proxies.Crimes;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

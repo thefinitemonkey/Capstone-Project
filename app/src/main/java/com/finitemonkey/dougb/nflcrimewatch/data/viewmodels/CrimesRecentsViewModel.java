@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Crimes;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 
 import java.util.List;

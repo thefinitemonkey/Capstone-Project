@@ -1,4 +1,4 @@
-package com.finitemonkey.dougb.nflcrimewatch.data.placeholders;
+package com.finitemonkey.dougb.nflcrimewatch.data.proxies;
 
 
 public class Positions {

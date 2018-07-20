@@ -6,12 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
+import com.finitemonkey.dougb.nflcrimewatch.data.proxies.Positions;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

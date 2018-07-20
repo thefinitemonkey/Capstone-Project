@@ -8,7 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.finitemonkey.dougb.nflcrimewatch.data.placeholders.Positions;
+import com.finitemonkey.dougb.nflcrimewatch.data.proxies.Positions;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.util.List;
