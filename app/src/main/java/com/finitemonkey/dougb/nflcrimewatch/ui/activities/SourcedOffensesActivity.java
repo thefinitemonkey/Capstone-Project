@@ -24,7 +24,7 @@ public class SourcedOffensesActivity extends AppCompatActivity implements Source
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the caluse passed in on the savedInstanceState
+        // Get the source passed in on the savedInstanceState
         mSourceId = getIntent().getStringExtra(getResources().getString(R.string.source_id));
         mSourceType = getIntent().getIntExtra(
                 getResources().getString(R.string.sourced_instance_type), 0);
@@ -33,6 +33,7 @@ public class SourcedOffensesActivity extends AppCompatActivity implements Source
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +42,7 @@ public class SourcedOffensesActivity extends AppCompatActivity implements Source
                         .setAction("Action", null).show();
             }
         });
+        */
     }
 
     @Override
