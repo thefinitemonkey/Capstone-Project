@@ -55,15 +55,15 @@ public interface ArrestsDao {
             "GROUP BY playerPosition ORDER BY arrestCount DESC")
     LiveData<List<Positions>> loadPositionArrestCounts();
 
-    @Query("SELECT * FROM arrests WHERE encounter=:crimeId ORDER BY date DESC")
+    @Query("SELECT * FROM arrests WHERE category=:crimeId ORDER BY date DESC")
     LiveData<List<Arrests>> loadCrimeArrests(String crimeId);
 
     @Query("SELECT * FROM arrests WHERE date = (SELECT max(date) FROM arrests as a " +
             "WHERE a.encounter=arrests.encounter) ORDER BY date DESC")
     LiveData<List<Arrests>> loadRecentCrimeArrests();
 
-    @Query("SELECT DISTINCT encounter, category, crimeCategoryColor, Count(arrestStatsId) AS arrestCount FROM arrests " +
-            "GROUP BY encounter ORDER BY arrestCount DESC")
+    @Query("SELECT DISTINCT category, encounter, crimeCategoryColor, Count(arrestStatsId) AS arrestCount FROM arrests " +
+            "GROUP BY category ORDER BY arrestCount DESC")
     LiveData<List<Crimes>> loadCrimeArrestCounts();
 
     @Query("DELETE FROM arrests WHERE team=:team")

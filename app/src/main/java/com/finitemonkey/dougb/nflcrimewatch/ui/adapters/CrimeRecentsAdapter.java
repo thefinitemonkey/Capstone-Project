@@ -80,7 +80,7 @@ public class CrimeRecentsAdapter extends RecyclerView.Adapter<CrimeRecentsAdapte
         @Override
         public void onClick(View v) {
             int clickPosition = getAdapterPosition();
-            String crimeId = mCrimes.get(clickPosition).getEncounter();
+            String crimeId = mCrimes.get(clickPosition).getCategory();
             mListener.onCrimeRecentsHolderClick(crimeId);
         }
     }

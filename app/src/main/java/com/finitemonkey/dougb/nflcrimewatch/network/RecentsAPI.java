@@ -155,7 +155,7 @@ public class RecentsAPI implements ArrestsUtils.ArrestUpdateData {
         protected void onPostExecute(List<Arrests> tr) {
             super.onPostExecute(tr);
 
-            if (tr != null) {
+            if (tr != null && tr.size() > 0) {
                 for (Arrests trItem : tr
                         ) {
                     trItem.setLogo(Logos.lookupIdByTeam(trItem.getTeam()));

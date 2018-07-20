@@ -68,34 +68,8 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
             public void onChanged(@Nullable List<Arrests> recents) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setTeamRecents(recents);
-                if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(recents);
-                }
             }
         });
-    }
-
-    private void checkIfUpdatedToday(List<Arrests> arrests) {
-        // Check if the update has already been done today
-        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(arrests);
-        Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
-
-        // If not updated yet then kick off the update
-        if (!hasBeenUpdated) {
-            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
-            String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
-            Date today = Calendar.getInstance().getTime();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String strToday = dateFormat.format(today);
-            String strBegin = "2000-01-01";
-            RecentsAPI recentsRetrieval = new RecentsAPI();
-            recentsRetrieval.getRecents(
-                    mContext, getResources().getInteger(R.integer.source_type_team), teamsIds,
-                    strBegin, strToday, 1
-            );
-        }
-
-        mHasCheckedUpdate = true;
     }
 
     @Override

@@ -16,12 +16,17 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.CrimeRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
+import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecentsAPI.RecentByTeamsListener,
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         PositionRecentsFragment.OnFragmentInteractionListener,
         CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static Boolean mHasCheckedUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         setContentView(R.layout.activity_main);
 
         setupClosestTeamViewModel();
+        setupPositionRecentsViewModel();
     }
 
     private void setupClosestTeamViewModel() {
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         // Add the TeamRecents fragment to the display by default
         Log.d(TAG, "onResume: setting up teamRecents display");
-        setCrimeRecentsDisplay();
+        setTeamRecentsDisplay();
     }
 
     private void setTeamRecentsDisplay() {
@@ -108,6 +115,43 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                 fm.beginTransaction().remove(frag).commit();
             }
         }
+    }
+
+    private void setupPositionRecentsViewModel() {
+        PositionRecentsViewModel viewModel = ViewModelProviders.of(this).get(
+                PositionRecentsViewModel.class);
+        viewModel.getPositionRecents().observe(this, new Observer<List<Arrests>>() {
+            @Override
+            public void onChanged(@Nullable List<Arrests> recents) {
+                if (!mHasCheckedUpdate) {
+                    checkIfUpdatedToday(recents);
+                }
+            }
+        });
+    }
+
+    private void checkIfUpdatedToday(List<Arrests> recents) {
+        // Check if the update has already been done today
+        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(recents);
+        Log.d(TAG, "onTeamRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
+
+        // If not updated yet then kick off the update
+        if (!hasBeenUpdated) {
+            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
+            String[] positionIds = getResources().getStringArray(R.array.position_id_array);
+            Date today = Calendar.getInstance().getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String strToday = dateFormat.format(today);
+            String strBegin = "2000-01-01";
+            RecentsAPI recentsRetrieval = new RecentsAPI();
+            recentsRetrieval.getRecents(
+                    this, getResources().getInteger(R.integer.source_type_position),
+                    positionIds,
+                    strBegin, strToday, 100
+            );
+        }
+
+        mHasCheckedUpdate = true;
     }
 
     @Override

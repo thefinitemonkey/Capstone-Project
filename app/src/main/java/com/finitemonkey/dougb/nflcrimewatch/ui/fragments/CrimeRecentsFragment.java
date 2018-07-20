@@ -81,43 +81,6 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
         });
     }
 
-    private void setupCrimeRecentsViewModel() {
-        CrimesRecentsViewModel viewModel = ViewModelProviders.of(this).get(
-                CrimesRecentsViewModel.class);
-        viewModel.getCrimeRecents().observe(this, new Observer<List<Arrests>>() {
-            @Override
-            public void onChanged(@Nullable List<Arrests> recents) {
-                if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(recents);
-                }
-            }
-        });
-    }
-
-    private void checkIfUpdatedToday(List<Arrests> recents) {
-        // Check if the update has already been done today
-        Boolean hasBeenUpdated = RecentsUtils.startCheckUpdatedInPastDay(recents);
-        Log.d(TAG, "onCrimeRecentsCheckResult: data has been updated today is " + hasBeenUpdated);
-
-        // If not updated yet then kick off the update
-        if (!hasBeenUpdated) {
-            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
-            String[] positionIds = getResources().getStringArray(R.array.position_id_array);
-            Date today = Calendar.getInstance().getTime();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String strToday = dateFormat.format(today);
-            String strBegin = "2000-01-01";
-            RecentsAPI recentsRetrieval = new RecentsAPI();
-            recentsRetrieval.getRecents(
-                    mContext, getResources().getInteger(R.integer.source_type_crime),
-                    positionIds,
-                    strBegin, strToday, 100
-            );
-        }
-
-        mHasCheckedUpdate = true;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -147,7 +110,6 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
 
         // Set up the viewModel
         setupCrimeCountsViewModel();
-        setupCrimeRecentsViewModel();
 
         return view;
     }
@@ -175,6 +137,6 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(int sourceType, String position);
+        void onFragmentInteraction(int sourceType, String crime);
     }
 }
