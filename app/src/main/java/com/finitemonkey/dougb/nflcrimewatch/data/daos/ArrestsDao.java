@@ -66,6 +66,9 @@ public interface ArrestsDao {
             "GROUP BY category ORDER BY arrestCount DESC")
     LiveData<List<Crimes>> loadCrimeArrestCounts();
 
+    @Query("SELECT * FROM arrests WHERE playerName=:playerName ORDER BY date DESC")
+    LiveData<List<Arrests>> loadPlayerArrests(String playerName);
+
     @Query("DELETE FROM arrests WHERE team=:team")
     int deleteTeamArrests(String team);
 

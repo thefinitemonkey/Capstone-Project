@@ -20,6 +20,8 @@ import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.CrimesArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.CrimesArrestsViewModelFactory;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PlayerArrestsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PlayerArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
@@ -40,7 +42,7 @@ import static android.support.v7.widget.DividerItemDecoration.HORIZONTAL;
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 
-public class SourcedOffensesFragment extends Fragment {
+public class SourcedOffensesFragment extends Fragment implements SourcedOffensesAdapter.SourceOffensesHolderClickListener {
     private static final String TAG = SourcedOffensesFragment.class.getSimpleName();
     @BindView(R.id.rv_sourced_offenses)
     RecyclerView mRecyclerView;
@@ -78,9 +80,6 @@ public class SourcedOffensesFragment extends Fragment {
             public void onChanged(@Nullable List<Arrests> arrests) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setArrests(arrests);
-                if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(arrests, mParamId);
-                }
             }
         });
     }
@@ -94,9 +93,6 @@ public class SourcedOffensesFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Arrests> arrests) {
                 mAdapter.setArrests(arrests);
-                if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(arrests, mParamId);
-                }
             }
         });
     }
@@ -110,34 +106,21 @@ public class SourcedOffensesFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Arrests> arrests) {
                 mAdapter.setArrests(arrests);
-                if (!mHasCheckedUpdate) {
-                    checkIfUpdatedToday(arrests, mParamId);
-                }
             }
         });
     }
 
-    private void checkIfUpdatedToday(List<Arrests> arrests, String paramId) {
-        // Check if the update has already been done today
-        Boolean hasBeenUpdated = ArrestsUtils.startCheckUpdatedInPastDay(arrests);
-        Log.d(
-                TAG,
-                "onCheckIfUpdatedToday (sourced offenses): arrests data has been updated today is " + hasBeenUpdated
-        );
-
-        // If not updated yet then kick off the update
-        if (!hasBeenUpdated) {
-            // Need to make the daily check for updates to TeamRecents (recents offenses by team)
-            String[] teamsIds = getResources().getStringArray(R.array.team_ids_array);
-            Date today = Calendar.getInstance().getTime();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String strToday = dateFormat.format(today);
-            String strBegin = "2000-01-01";
-            ArrestsAPI recentsRetrieval = new ArrestsAPI();
-            recentsRetrieval.getArrestsByTeam(mContext, paramId, strBegin, strToday);
-        }
-
-        mHasCheckedUpdate = true;
+    private void setupPlayerArrestsViewModel() {
+        Application application = this.getActivity().getApplication();
+        PlayerArrestsViewModel viewModel = ViewModelProviders.of(
+                this, new PlayerArrestsViewModelFactory(application, mParamId)
+        ).get(PlayerArrestsViewModel.class);
+        viewModel.getPlayerArrests().observe(this, new Observer<List<Arrests>>() {
+            @Override
+            public void onChanged(@Nullable List<Arrests> arrests) {
+                mAdapter.setArrests(arrests);
+            }
+        });
     }
 
     @Override
@@ -153,7 +136,9 @@ public class SourcedOffensesFragment extends Fragment {
         int spanCount = getResources().getInteger(R.integer.num_team_recents_grid);
         mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, spanCount));
         // Initialize the adapter and attach to the view
-        mAdapter = new SourcedOffensesAdapter(mContext);
+        Boolean isClickable = getArguments().getBoolean(
+                getResources().getString(R.string.offenses_clickable));
+        mAdapter = new SourcedOffensesAdapter(mContext, isClickable, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // Put in a separator between lines
@@ -186,6 +171,10 @@ public class SourcedOffensesFragment extends Fragment {
                 setupCrimeArrestsViewModel();
                 break;
             }
+            case (R.string.source_player): {
+                setupPlayerArrestsViewModel();
+                break;
+            }
         }
 
         return view;
@@ -208,8 +197,12 @@ public class SourcedOffensesFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onSourceOffensesHolderClick(String playerName) {
+        mListener.onFragmentInteraction(playerName);
+    }
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String sourceId);
     }
 }

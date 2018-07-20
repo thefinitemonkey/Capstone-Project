@@ -20,6 +20,8 @@
     <string name="source_position">position</string>
     <string name="source_crime">encounter</string>
     <string name="source_id">sourceId</string>
+    <string name="source_player">player</string>
+    <string name="offenses_clickable">offensesClickable</string>
 
 
     <string name="CardinalsID">ARI</string>

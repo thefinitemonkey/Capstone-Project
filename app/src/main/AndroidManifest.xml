@@ -22,7 +22,13 @@
         <activity
             android:name=".ui.activities.SourcedOffensesActivity"
             android:label="@string/title_activity_sourced_offenses"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.MainActivity" />
+
+        </activity>
     </application>
 
 </manifest>

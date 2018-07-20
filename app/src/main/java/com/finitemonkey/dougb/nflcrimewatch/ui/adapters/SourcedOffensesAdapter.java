@@ -24,10 +24,14 @@ public class SourcedOffensesAdapter extends RecyclerView.Adapter<SourcedOffenses
     private List<Arrests> mArrests;
     private int mArrestsCount = 0;
     private Context mContext;
+    private SourceOffensesHolderClickListener mListener;
+    private Boolean mClickable;
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, `yy");
 
-    public SourcedOffensesAdapter(Context context) {
+    public SourcedOffensesAdapter(Context context, Boolean clickable, SourceOffensesHolderClickListener listener) {
         mContext = context;
+        mClickable = clickable;
+        mListener = listener;
     }
 
     public void setArrests(List<Arrests> arrests) {
@@ -75,7 +79,7 @@ public class SourcedOffensesAdapter extends RecyclerView.Adapter<SourcedOffenses
         return mArrestsCount;
     }
 
-    class SourcedOffensesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class SourcedOffensesViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
         @BindView(R.id.iv_team_logo)
         ImageView mTeamLogo;
         @BindView(R.id.tv_player_name)
@@ -95,13 +99,23 @@ public class SourcedOffensesAdapter extends RecyclerView.Adapter<SourcedOffenses
 
         public SourcedOffensesViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             ButterKnife.bind(this, itemView);
         }
 
         @Override
         public void onClick(View v) {
+            // If we've drilled in far enough, the items won't be clickable any more
+            if (!mClickable) return;
 
+            int clickPosition = getAdapterPosition();
+            String playerName = mArrests.get(clickPosition).getPlayerName();
+            mListener.onSourceOffensesHolderClick(playerName);
         }
+    }
+
+    public interface SourceOffensesHolderClickListener {
+        void onSourceOffensesHolderClick(String playerName);
     }
 }
