@@ -1,11 +1,16 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.arch.lifecycle.Observer;
@@ -35,6 +40,9 @@ import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,13 +58,16 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static Boolean mHasCheckedUpdate = false;
-    private static Context mContext;
+    private final Activity mActivity = (Activity) this;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 0;
     @BindView(R.id.drawer_main)
     DrawerLayout mDrawer;
     @BindView(R.id.nav_view_main)
     NavigationView mNavView;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    private Context mContext;
+    private FusedLocationProviderClient mFused;
     private Menu mNavMenu;
 
 
@@ -65,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        mFused = LocationServices.getFusedLocationProviderClient(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -127,27 +139,61 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    setupClosestTeamViewModel();
+                }
+            }
+        }
+    }
+
     private void setupClosestTeamViewModel() {
         ClosestTeamViewModel viewModel = ViewModelProviders.of(this).get(
                 ClosestTeamViewModel.class);
         viewModel.getStadiums().observe(this, new Observer<List<Stadiums>>() {
             @Override
-            public void onChanged(@Nullable List<Stadiums> stadiums) {
+            public void onChanged(@Nullable final List<Stadiums> stadiums) {
                 // Check if a preferred team has already been set / selected
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
                         mContext);
                 String prefTeam = sharedPreferences.getString("list_preference_team", null);
-                if (prefTeam!= null) {
+                if (prefTeam != null) {
                     Log.d(TAG, "onChanged: preferred team is " + prefTeam);
                     return;
                 }
 
                 // No preferred team, so set one up by getting the phone location
+                int fineGranted = ActivityCompat.checkSelfPermission(
+                        mContext, Manifest.permission.ACCESS_FINE_LOCATION);
+                int coarseGranted = ActivityCompat.checkSelfPermission(
+                        mContext, Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (fineGranted != PackageManager.PERMISSION_GRANTED &&
+                        coarseGranted != PackageManager.PERMISSION_GRANTED) {
+                    String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
+                    ActivityCompat.requestPermissions(mActivity, permissions, PERMISSION_REQUEST_COARSE_LOCATION);
 
-                // Test the calculation to closest stadium
-                // lat 29.6503993 lon -95.7350763
-                String teamId = StadiumUtils.getClosestTeam(stadiums, 40.1677863, -83.0089769);
-                Log.d(TAG, "onChanged: closest team is " + teamId);
+                    return;
+                } else {
+                    mFused.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Check that location isn't null
+                            if (location == null) return;
+
+                            // Use the location to determine the closest team and set that as
+                            // the default favorite team in the preferences
+                            Double lat = location.getLatitude();
+                            Double lon = location.getLongitude();
+                            String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
+                            Log.d(TAG, "getLastLocation: closest team is " + teamId);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("list_preference_team", teamId);
+                        }
+                    });
+                }
             }
         });
     }
