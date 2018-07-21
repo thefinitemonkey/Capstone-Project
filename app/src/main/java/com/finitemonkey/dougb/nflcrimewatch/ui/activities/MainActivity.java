@@ -1,6 +1,9 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static Boolean mHasCheckedUpdate = false;
+    private static Context mContext;
     @BindView(R.id.drawer_main)
     DrawerLayout mDrawer;
     @BindView(R.id.nav_view_main)
@@ -53,28 +58,14 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     private Menu mNavMenu;
-    /*
-    @BindView(R.id.nav_menu_item_team)
-    MenuItem mTeamMenu;
-    @BindView(R.id.nav_menu_item_position)
-    MenuItem mPositionMenu;
-    @BindView(R.id.nav_menu_item_crime)
-    MenuItem mCrimeMenu;
-    int mTMId;
-    int mPMId;
-    int mCMId;
-    */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         ButterKnife.bind(this);
-        /*
-        mTMId = mTeamMenu.getItemId();
-        mPMId = mPositionMenu.getItemId();
-        mCMId = mCrimeMenu.getItemId();
-        */
 
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -100,10 +91,22 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home: {
                 mDrawer.openDrawer(GravityCompat.START);
+            }
+            case R.id.action_settings: {
+                Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+                startActivity(startSettingsActivity);
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -130,6 +133,17 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         viewModel.getStadiums().observe(this, new Observer<List<Stadiums>>() {
             @Override
             public void onChanged(@Nullable List<Stadiums> stadiums) {
+                // Check if a preferred team has already been set / selected
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+                        mContext);
+                String prefTeam = sharedPreferences.getString("list_preference_team", null);
+                if (prefTeam!= null) {
+                    Log.d(TAG, "onChanged: preferred team is " + prefTeam);
+                    return;
+                }
+
+                // No preferred team, so set one up by getting the phone location
+
                 // Test the calculation to closest stadium
                 // lat 29.6503993 lon -95.7350763
                 String teamId = StadiumUtils.getClosestTeam(stadiums, 40.1677863, -83.0089769);

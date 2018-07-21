@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".ui.activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,12 +24,17 @@
         <activity
             android:name=".ui.activities.SourcedOffensesActivity"
             android:label="@string/title_activity_sourced_offenses"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".ui.activities.MainActivity">
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
-
+        </activity>
+        <activity android:name=".ui.activities.SettingsActivity"
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:label="@string/action_settings">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.MainActivity"/>
         </activity>
     </application>
 

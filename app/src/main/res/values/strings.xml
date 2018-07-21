@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">NFL Crimewatch</string>
 
+    <string name="action_settings">Settings</string>
+    <string name="team_selection_title">Preferred Team</string>
+
     <string name="nav_team_label">Teams</string>
     <string name="nav_position_label">Positions</string>
     <string name="nav_crime_label">Crimes</string>
