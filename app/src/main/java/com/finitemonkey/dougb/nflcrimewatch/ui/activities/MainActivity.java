@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     }
 
     private void setupClosestTeamViewModel() {
+        Log.d(TAG, "setupClosestTeamViewModel: setting up the viewmodel");
         ClosestTeamViewModel viewModel = ViewModelProviders.of(this).get(
                 ClosestTeamViewModel.class);
         viewModel.getStadiums().observe(this, new Observer<List<Stadiums>>() {
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                             String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
                             Log.d(TAG, "getLastLocation: closest team is " + teamId);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("list_preference_team", teamId);
+                            editor.putString("list_preference_team", teamId).commit();
                         }
                     });
                 }
