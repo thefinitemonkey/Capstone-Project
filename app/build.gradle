@@ -16,6 +16,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "tier"
+    productFlavors {
+        free {
+            applicationId "com.finitemonkey.dougb.nflcrimewatch.free"
+            dimension "tier"
+        }
+        paid {
+            applicationId "com.finitemonkey.dougb.nflcrimewatch.paid"
+            dimension "tier"
+        }
+    }
 }
 
 dependencies {

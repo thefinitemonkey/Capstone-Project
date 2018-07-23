@@ -30,7 +30,6 @@ import android.view.View;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
@@ -41,9 +40,6 @@ import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
