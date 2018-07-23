@@ -66,4 +66,7 @@
 
     <string name="tv_placeholder_team_name">Team Name</string>
     <string name="title_activity_sourced_offenses">SourcedOffensesActivity</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
 </resources>

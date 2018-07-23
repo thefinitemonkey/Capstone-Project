@@ -35,11 +35,15 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
+import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.AdFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.CrimeRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,15 +61,16 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         PositionRecentsFragment.OnFragmentInteractionListener,
         CrimeRecentsFragment.OnFragmentInteractionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 0;
     private static Boolean mHasCheckedUpdate = false;
     private final Activity mActivity = (Activity) this;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 0;
     @BindView(R.id.drawer_main)
     DrawerLayout mDrawer;
     @BindView(R.id.nav_view_main)
     NavigationView mNavView;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+
     private Context mContext;
     private FusedLocationProviderClient mFused;
     private Menu mNavMenu;
@@ -98,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         mNavMenu = mNavView.getMenu();
 
 
+
         setupClosestTeamViewModel();
         setupPositionRecentsViewModel();
     }
@@ -114,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         switch (item.getItemId()) {
             case android.R.id.home: {
                 mDrawer.openDrawer(GravityCompat.START);
+                return true;
             }
             case R.id.action_settings: {
                 Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
@@ -141,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode) {
+        switch (requestCode) {
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setupClosestTeamViewModel();
@@ -174,26 +181,28 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                 if (fineGranted != PackageManager.PERMISSION_GRANTED &&
                         coarseGranted != PackageManager.PERMISSION_GRANTED) {
                     String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
-                    ActivityCompat.requestPermissions(mActivity, permissions, PERMISSION_REQUEST_COARSE_LOCATION);
+                    ActivityCompat.requestPermissions(
+                            mActivity, permissions, PERMISSION_REQUEST_COARSE_LOCATION);
 
                     return;
                 } else {
-                    mFused.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Check that location isn't null
-                            if (location == null) return;
+                    mFused.getLastLocation().addOnSuccessListener(
+                            new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Check that location isn't null
+                                    if (location == null) return;
 
-                            // Use the location to determine the closest team and set that as
-                            // the default favorite team in the preferences
-                            Double lat = location.getLatitude();
-                            Double lon = location.getLongitude();
-                            String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
-                            Log.d(TAG, "getLastLocation: closest team is " + teamId);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("list_preference_team", teamId).commit();
-                        }
-                    });
+                                    // Use the location to determine the closest team and set that as
+                                    // the default favorite team in the preferences
+                                    Double lat = location.getLatitude();
+                                    Double lon = location.getLongitude();
+                                    String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
+                                    Log.d(TAG, "getLastLocation: closest team is " + teamId);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("list_preference_team", teamId).commit();
+                                }
+                            });
                 }
             }
         });
@@ -217,12 +226,19 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         handleNavClick(mi);
     }
 
+    private void setAdDisplay() {
+        FragmentManager fm = getSupportFragmentManager();
+        AdFragment af = new AdFragment();
+        fm.beginTransaction().add(R.id.fr_adView, af).commit();
+    }
+
     private void setTeamRecentsDisplay() {
         clearFragments();
 
         FragmentManager fm = getSupportFragmentManager();
         TeamRecentsFragment trf = new TeamRecentsFragment();
-        fm.beginTransaction().add(R.id.cl_main_display, trf).commit();
+        fm.beginTransaction().add(R.id.fl_main_content, trf).commit();
+        setAdDisplay();
     }
 
     private void setPositionRecentsDisplay() {
@@ -230,7 +246,8 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         FragmentManager fm = getSupportFragmentManager();
         PositionRecentsFragment prf = new PositionRecentsFragment();
-        fm.beginTransaction().add(R.id.cl_main_display, prf).commit();
+        fm.beginTransaction().add(R.id.fl_main_content, prf).commit();
+        setAdDisplay();
     }
 
     private void setCrimeRecentsDisplay() {
@@ -238,7 +255,8 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
 
         FragmentManager fm = getSupportFragmentManager();
         CrimeRecentsFragment crf = new CrimeRecentsFragment();
-        fm.beginTransaction().add(R.id.cl_main_display, crf).commit();
+        fm.beginTransaction().add(R.id.fl_main_content, crf).commit();
+        setAdDisplay();
     }
 
     private void clearFragments() {
@@ -247,13 +265,15 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
         List<Fragment> frags = fm.getFragments();
         if (frags == null) return;
 
-        View cl = findViewById(R.id.cl_main_display);
+        View fl = findViewById(R.id.fl_main_content);
+        View fr = findViewById(R.id.fr_adView);
         for (Fragment frag : frags) {
-            if (frag.getView() == null) return;
+            if (frag.getView() != null) {
 
-            View view = (View) frag.getView().getParent();
-            if (view.equals(cl)) {
-                fm.beginTransaction().remove(frag).commit();
+                View view = (View) frag.getView().getParent();
+                if (view.equals(fl) || view.equals(fr)) {
+                    fm.beginTransaction().remove(frag).commit();
+                }
             }
         }
     }
