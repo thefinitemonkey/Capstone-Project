@@ -56,6 +56,9 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
 
         // Set the logo
         holder.mTeamLogo.setImageResource(tr.getLogo());
+        holder.mTeamLogo.setContentDescription(
+                tr.getTeamPreferredName() + " " + mContext.getResources().getString(
+                        R.string.logo_label));
 
         // Set the offense color
         //int colorCode = Color.parseColor("#" + tr.getCrimeCategoryColor());
@@ -76,6 +79,10 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
     @Override
     public int getItemCount() {
         return mTeamRecentsCount;
+    }
+
+    public interface TeamRecentsHolderClickListener {
+        void onTeamRecentsHolderClick(String teamId);
     }
 
     class TeamRecentsViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
@@ -103,9 +110,5 @@ public class TeamRecentsAdapter extends RecyclerView.Adapter<TeamRecentsAdapter.
             String teamId = mRecents.get(clickPosition).getTeam();
             mListener.onTeamRecentsHolderClick(teamId);
         }
-    }
-
-    public interface TeamRecentsHolderClickListener {
-        void onTeamRecentsHolderClick(String teamId);
     }
 }

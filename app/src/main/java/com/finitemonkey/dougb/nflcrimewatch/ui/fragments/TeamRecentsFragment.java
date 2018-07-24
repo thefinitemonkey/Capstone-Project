@@ -4,6 +4,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -43,6 +46,8 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     private Boolean mHasCheckedUpdate = false;
     private OnFragmentInteractionListener mListener;
 
+    private Parcelable mListState;
+
 
     public TeamRecentsFragment() {
         // Required empty public constructor
@@ -56,8 +61,19 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            mListState = savedInstanceState.getParcelable("ListState");
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("ListState", mRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     private void setupTeamRecentsViewModel() {
@@ -68,6 +84,9 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
             public void onChanged(@Nullable List<Arrests> recents) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setTeamRecents(recents);
+                if (mListState != null) {
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                }
             }
         });
     }

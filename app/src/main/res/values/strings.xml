@@ -28,6 +28,9 @@
     <string name="source_player">player</string>
     <string name="offenses_clickable">offensesClickable</string>
 
+    <string name="logo_label">logo</string>
+    <string name="nfl_logo_label">NFL logo</string>
+
 
     <string name="CardinalsID">ARI</string>
     <string name="FalconsID">ATL</string>

@@ -5,6 +5,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -38,6 +40,8 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
     private Boolean mHasCheckedUpdate = false;
     private OnFragmentInteractionListener mListener;
 
+    private Parcelable mListState;
+
 
     public CrimeRecentsFragment() {
         // Required empty public constructor
@@ -51,8 +55,19 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            mListState = savedInstanceState.getParcelable("ListState");
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("ListState", mRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     private void setupCrimeCountsViewModel() {
@@ -66,6 +81,9 @@ public class CrimeRecentsFragment extends Fragment implements CrimeRecentsAdapte
             public void onChanged(@Nullable List<Crimes> crimes) {
                 // Set the adapter and see if we need a data refresh
                 mAdapter.setCrimeRecents(crimes);
+                if (mListState != null) {
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                }
             }
         });
     }

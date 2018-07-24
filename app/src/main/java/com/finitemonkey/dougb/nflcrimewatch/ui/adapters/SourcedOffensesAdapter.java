@@ -57,6 +57,9 @@ public class SourcedOffensesAdapter extends RecyclerView.Adapter<SourcedOffenses
 
         // Set the logo
         holder.mTeamLogo.setImageResource(arrest.getLogo());
+        holder.mTeamLogo.setContentDescription(
+                arrest.getTeamPreferredName() + " " + mContext.getResources().getString(
+                        R.string.logo_label));
 
         // Set the offense color
         int colorCode = Color.parseColor("#" + arrest.getCrimeCategoryColor());
