@@ -9,20 +9,26 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
+import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.ui.widget.NFLCrimewatchWidget;
 import com.finitemonkey.dougb.nflcrimewatch.ui.widget.WidgetData;
+import com.finitemonkey.dougb.nflcrimewatch.utils.AppExecutors;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Prefs;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -49,19 +55,18 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Prefs.FAVORITE_TEAM)) {
-            String teamId = sharedPreferences.getString(key, null);
-
-            // Get the view model for the team arrests and watch for changes
-            final Activity activity = this.getActivity();
+            final String teamId = sharedPreferences.getString(key, null);
             final Context context = this.getContext();
-            Application application = this.getActivity().getApplication();
-            mViewModel =
-                    ViewModelProviders.of(this, new TeamArrestsViewModelFactory(
-                            application, teamId)
-                    ).get(TeamArrestsViewModel.class);
-            mViewModel.getTeamArrests().observe(this, new Observer<List<Arrests>>() {
+            final Activity activity = this.getActivity();
+
+            // Run the requests to delete all the matching arrest records and then insert all
+            // the new set of records
+            AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
                 @Override
-                public void onChanged(@Nullable List<Arrests> arrests) {
+                public void run() {
+                    NFLCrimewatchDatabase db = NFLCrimewatchDatabase.getInstance(context);
+                    List<Arrests> arrests = db.arrestsDao().loadWidgetArrests(teamId);
+
                     // Get the data for the first record and set it into the prefs
                     if (arrests.size() == 0) return;
 
@@ -91,11 +96,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                             ) {
                         NFLCrimewatchWidget.updateCrimewatchWidget(activity, appWidgetManager, appWidgetId);
                     }
+                    WidgetData.updateTeamArrestWidgetData(activity, teamId);
                 }
             });
-
-
-            WidgetData.updateTeamArrestWidgetData(this.getActivity(), teamId);
         }
     }
 }

@@ -40,6 +40,9 @@ public interface ArrestsDao {
     @Query("SELECT * FROM arrests WHERE team=:teamId ORDER BY date DESC")
     LiveData<List<Arrests>> loadTeamArrests(String teamId);
 
+    @Query("SELECT * FROM arrests WHERE team=:teamId ORDER BY date DESC")
+    List<Arrests> loadWidgetArrests(String teamId);
+
     @Query("SELECT * FROM arrests WHERE date = (SELECT max(date) from arrests as a " +
             "WHERE a.team=arrests.team) ORDER BY date DESC")
     LiveData<List<Arrests>> loadRecentTeamArrests();
