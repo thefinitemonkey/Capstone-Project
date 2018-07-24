@@ -2,6 +2,7 @@ package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,11 +34,15 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
+import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.AdFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.CrimeRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
+import com.finitemonkey.dougb.nflcrimewatch.ui.widget.WidgetData;
+import com.finitemonkey.dougb.nflcrimewatch.utils.Prefs;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                 // Check if a preferred team has already been set / selected
                 final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
                         mContext);
-                String prefTeam = sharedPreferences.getString("list_preference_team", null);
+                String prefTeam = sharedPreferences.getString(Prefs.FAVORITE_TEAM, null);
                 if (prefTeam != null) {
                     Log.d(TAG, "onChanged: preferred team is " + prefTeam);
                     return;
@@ -196,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                                     String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
                                     Log.d(TAG, "getLastLocation: closest team is " + teamId);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("list_preference_team", teamId).commit();
+                                    editor.putString(Prefs.FAVORITE_TEAM, teamId).commit();
                                 }
                             });
                 }
