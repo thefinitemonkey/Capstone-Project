@@ -17,5 +17,5 @@ This project is Doug Brown's capstone for Udacity's Android Nano-Degree program.
 ## To Review
 
 * Clone this source code
-* The crimewatch keystore has a password of immapassword
+* The crimewatch keystore has a password of immapassword and alias of FiniteMonkeyKey
 * Target SDK is 27, minimum SDK is 21
