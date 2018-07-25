@@ -7,6 +7,7 @@
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/cl_activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activities.MainActivity">
@@ -14,15 +15,16 @@
         <include layout="@layout/content_main" />
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/ab_appbar_main_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:fitsSystemWindows="true">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/ct_main_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginEnd="64dp"
@@ -30,15 +32,31 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:titleEnabled="true">
 
+                <FrameLayout
+                    android:id="@+id/fl_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="parallax">
+
+                    <ImageView
+                        android:id="@+id/iv_nfl_logo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/nfl_logo_label"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="centerInside"
+                        app:srcCompat="@drawable/ic_nfl" />
+                </FrameLayout>
+
             </android.support.design.widget.CollapsingToolbarLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                layout_collapseMode="pin"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                layout_collapseMode="pin"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -51,6 +69,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu" />
+        app:menu="@menu/menu"
+        app:headerLayout="@layout/nav_header"/>
 </android.support.v4.widget.DrawerLayout>

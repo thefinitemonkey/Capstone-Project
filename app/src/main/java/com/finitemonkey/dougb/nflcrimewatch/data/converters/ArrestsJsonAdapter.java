@@ -1,6 +1,5 @@
 package com.finitemonkey.dougb.nflcrimewatch.data.converters;
 
-import android.support.annotation.Nullable;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.squareup.moshi.FromJson;

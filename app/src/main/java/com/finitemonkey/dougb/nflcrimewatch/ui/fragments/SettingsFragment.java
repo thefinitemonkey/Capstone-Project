@@ -1,34 +1,23 @@
 package com.finitemonkey.dougb.nflcrimewatch.ui.fragments;
 
 import android.app.Activity;
-import android.app.Application;
 import android.appwidget.AppWidgetManager;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.ui.widget.NFLCrimewatchWidget;
 import com.finitemonkey.dougb.nflcrimewatch.ui.widget.WidgetData;
 import com.finitemonkey.dougb.nflcrimewatch.utils.AppExecutors;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Prefs;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -87,7 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                             .putString(Prefs.RECENT_CRIME, recentCrime)
                             .putString(Prefs.RECENT_PRIMARY_COLOR, recentPrimary)
                             .putString(Prefs.RECENT_SECONDARY_COLOR, recentSecondary)
-                            .putInt(Prefs.RECENT_LOGO, recentLogo).commit();
+                            .putInt(Prefs.RECENT_LOGO, recentLogo).apply();
 
                     // Make the call to update widgets
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(activity);

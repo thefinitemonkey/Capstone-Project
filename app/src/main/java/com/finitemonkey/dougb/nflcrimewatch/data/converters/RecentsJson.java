@@ -1,6 +1,5 @@
 package com.finitemonkey.dougb.nflcrimewatch.data.converters;
 
-import java.util.Date;
 
 public class RecentsJson {
     int arrest_stats_id;

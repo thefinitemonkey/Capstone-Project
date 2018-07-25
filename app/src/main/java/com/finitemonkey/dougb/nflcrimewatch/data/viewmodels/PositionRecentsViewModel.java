@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 
 import com.finitemonkey.dougb.nflcrimewatch.data.NFLCrimewatchDatabase;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.util.List;
 

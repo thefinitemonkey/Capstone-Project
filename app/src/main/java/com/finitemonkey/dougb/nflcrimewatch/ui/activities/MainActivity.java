@@ -2,7 +2,6 @@ package com.finitemonkey.dougb.nflcrimewatch.ui.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,14 +33,11 @@ import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Stadiums;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.ClosestTeamViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionRecentsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.AdFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.CrimeRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.PositionRecentsFragment;
 import com.finitemonkey.dougb.nflcrimewatch.ui.fragments.TeamRecentsFragment;
-import com.finitemonkey.dougb.nflcrimewatch.ui.widget.WidgetData;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Prefs;
 import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.StadiumUtils;
@@ -76,20 +72,29 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     private FusedLocationProviderClient mFused;
     private Menu mNavMenu;
 
+    private Boolean mNeedsBuilt = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+
+        // Set the flag to prevent rebuilding the display fragment if appropriate
+        if (savedInstanceState != null) mNeedsBuilt = false;
+
+        // Set up location services and bind elements
         mFused = LocationServices.getFusedLocationProviderClient(this);
         ButterKnife.bind(this);
 
+        // Set the toolbar
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
+        // Set the navigation listener
         mNavView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -103,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                 });
         mNavMenu = mNavView.getMenu();
 
-
-
+        // Set up the view for closest team and recent crimes by position
         setupClosestTeamViewModel();
         setupPositionRecentsViewModel();
     }
@@ -184,8 +188,6 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                     String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
                     ActivityCompat.requestPermissions(
                             mActivity, permissions, PERMISSION_REQUEST_COARSE_LOCATION);
-
-                    return;
                 } else {
                     mFused.getLastLocation().addOnSuccessListener(
                             new OnSuccessListener<Location>() {
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
                                     String teamId = StadiumUtils.getClosestTeam(stadiums, lat, lon);
                                     Log.d(TAG, "getLastLocation: closest team is " + teamId);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString(Prefs.FAVORITE_TEAM, teamId).commit();
+                                    editor.putString(Prefs.FAVORITE_TEAM, teamId).apply();
                                 }
                             });
                 }
@@ -220,10 +222,11 @@ public class MainActivity extends AppCompatActivity implements RecentsAPI.Recent
     @Override
     protected void onResume() {
         super.onResume();
+        if (!mNeedsBuilt) return;
 
         // Add the TeamRecents fragment to the display by default
         Log.d(TAG, "onResume: setting up teamRecents display");
-        MenuItem mi = (MenuItem) mNavMenu.findItem(R.id.nav_menu_item_team);
+        MenuItem mi = mNavMenu.findItem(R.id.nav_menu_item_team);
         handleNavClick(mi);
     }
 

@@ -7,13 +7,11 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
-import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
@@ -55,7 +53,7 @@ public class WidgetData {
                         .putString(Prefs.RECENT_CRIME, recentCrime)
                         .putString(Prefs.RECENT_PRIMARY_COLOR, recentPrimary)
                         .putString(Prefs.RECENT_SECONDARY_COLOR, recentSecondary)
-                        .putInt(Prefs.RECENT_LOGO, recentLogo).commit();
+                        .putInt(Prefs.RECENT_LOGO, recentLogo).apply();
 
                 // Make the call to update widgets
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(activity);
@@ -70,7 +68,7 @@ public class WidgetData {
 
     public static void updateTeamArrestWidgetData(final Activity activity, String teamId) {
         // Check that teamId isn't null
-        if (teamId == null) return;
+        //if (teamId == null) return;
 
 
     }

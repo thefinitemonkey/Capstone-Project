@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

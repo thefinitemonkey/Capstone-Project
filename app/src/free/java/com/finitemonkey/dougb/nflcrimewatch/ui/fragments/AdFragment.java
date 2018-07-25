@@ -45,7 +45,7 @@ public class AdFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ad, container, false);
         ButterKnife.bind(view);
-        mAdView = (AdView) view.findViewById(R.id.adView);
+        mAdView = view.findViewById(R.id.adView);
         Context context = view.getContext();
         MobileAds.initialize(context);
         AdRequest adRequest = new AdRequest.Builder().build();

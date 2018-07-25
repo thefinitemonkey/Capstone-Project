@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        crimewatch {
+            keyAlias 'FiniteMonkeyKey'
+            keyPassword 'immapassword'
+            storeFile file('keystore/crimewatch')
+            storePassword 'immapassword'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.finitemonkey.dougb.nflcrimewatch"
@@ -14,9 +22,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.crimewatch
         }
     }
-
     flavorDimensions "tier"
     productFlavors {
         free {
@@ -28,10 +36,11 @@ android {
             dimension "tier"
         }
     }
+    buildToolsVersion '27.0.3'
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:support-v4:27.1.1'
@@ -39,25 +48,19 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
     // Play services for Location
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-
     // Butterknife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
     // Square modules
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.moshi:moshi:1.6.0'
-
     // Room
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
-
     // Google Ads
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
-
     // Misc
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'

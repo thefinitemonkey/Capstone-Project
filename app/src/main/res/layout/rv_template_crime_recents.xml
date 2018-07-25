@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/color_header_nav_text"
     android:paddingBottom="16dp"
     android:paddingEnd="8dp"
     android:paddingStart="8dp"
@@ -17,13 +18,13 @@
         android:ellipsize="end"
         android:gravity="start"
         android:lines="1"
-        android:text="Crime type"
         android:textAllCaps="true"
         android:textColor="@color/color_player_name"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Crime type" />
 
     <TextView
         android:id="@+id/tv_crime_arrests_count"
@@ -31,9 +32,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Number of arrests in period"
         android:textColor="@color/color_team_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_crime_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_crime_name"
+        tools:text="Number of arrests in period" />
 
 </android.support.constraint.ConstraintLayout>

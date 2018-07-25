@@ -8,12 +8,9 @@ import android.util.Log;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.converters.ArrestsJsonAdapter;
-import com.finitemonkey.dougb.nflcrimewatch.data.converters.RecentsJsonAdapter;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.utils.ArrestsUtils;
 import com.finitemonkey.dougb.nflcrimewatch.utils.Logos;
-import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -81,9 +78,8 @@ public class RecentsAPI implements ArrestsUtils.ArrestUpdateData {
             return;
         }
 
-        for (int i = 0; i < ids.length; i++) {
-            String paramId = ids[i];
-
+        for (String paramId: ids
+             ) {
             // Get the pieces from the string constants for this api
             String scheme = resources.getString(R.string.api_scheme);
             String authority = resources.getString(R.string.api_authority);
@@ -97,6 +93,7 @@ public class RecentsAPI implements ArrestsUtils.ArrestUpdateData {
                     endParam, strEndDate).appendQueryParameter(
                     startParam, strBeginDate).build();
             new RecentsAsync().execute(uri);
+
         }
     }
 

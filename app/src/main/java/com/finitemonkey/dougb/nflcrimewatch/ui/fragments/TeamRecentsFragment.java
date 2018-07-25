@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,15 +18,8 @@ import android.view.ViewGroup;
 
 import com.finitemonkey.dougb.nflcrimewatch.R;
 import com.finitemonkey.dougb.nflcrimewatch.data.tables.Arrests;
-import com.finitemonkey.dougb.nflcrimewatch.data.tables.Recents;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamRecentsViewModel;
-import com.finitemonkey.dougb.nflcrimewatch.network.RecentsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.TeamRecentsAdapter;
-import com.finitemonkey.dougb.nflcrimewatch.utils.RecentsUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -63,17 +55,22 @@ public class TeamRecentsFragment extends Fragment implements TeamRecentsAdapter.
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            mListState = savedInstanceState.getParcelable("ListState");
-        } catch (Exception e) {
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) return;
+        if (savedInstanceState.containsKey("ListState")) {
+            mListState = savedInstanceState.getParcelable("ListState");
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("ListState", mRecyclerView.getLayoutManager().onSaveInstanceState());
+        Parcelable saveInstanceState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable("ListState", saveInstanceState);
     }
 
     private void setupTeamRecentsViewModel() {

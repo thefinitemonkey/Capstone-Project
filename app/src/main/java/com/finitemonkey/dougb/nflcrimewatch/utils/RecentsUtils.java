@@ -88,7 +88,7 @@ public class RecentsUtils {
                         listener.onRecentDataUpdated(ntr);
                         return;
                     }
-                };
+                }
 
                 // If the first occurrence doesn't match the date of the one passed in then
                 // delete occurrences for the team (only for recent teams data)

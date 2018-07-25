@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,13 +25,8 @@ import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewM
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.PositionArrestsViewModelFactory;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModel;
 import com.finitemonkey.dougb.nflcrimewatch.data.viewmodels.TeamArrestsViewModelFactory;
-import com.finitemonkey.dougb.nflcrimewatch.network.ArrestsAPI;
 import com.finitemonkey.dougb.nflcrimewatch.ui.adapters.SourcedOffensesAdapter;
-import com.finitemonkey.dougb.nflcrimewatch.utils.ArrestsUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
