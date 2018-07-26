@@ -18,10 +18,14 @@ public class SourcedOffensesActivity extends AppCompatActivity implements Source
     private String mSourceId;
     private int mSourceType;
     private Boolean mIsClickable;
+    private Boolean mNeedsBuilt = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set the flag to prevent rebuilding the display fragment if appropriate
+        if (savedInstanceState != null) mNeedsBuilt = false;
 
         // Get the source passed in on the savedInstanceState
         mSourceId = getIntent().getStringExtra(getResources().getString(R.string.source_id));
@@ -49,19 +53,22 @@ public class SourcedOffensesActivity extends AppCompatActivity implements Source
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home: {
                 onBackPressed();
                 return true;
             }
         }
-        return(super.onOptionsItemSelected(item));
+        return (super.onOptionsItemSelected(item));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setSourcedOffenseDisplay();
+
+        if (mNeedsBuilt) {
+            setSourcedOffenseDisplay();
+        }
     }
 
     private void setSourcedOffenseDisplay() {
